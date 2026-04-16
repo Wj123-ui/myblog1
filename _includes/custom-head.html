@@ -1,1 +1,73 @@
 <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
+
+<!-- 返回顶部按钮 -->
+<button id="back-to-top" title="返回顶部">↑</button>
+
+<!-- 阅读进度条 -->
+<div id="reading-progress"></div>
+
+<!-- 鼠标跟随光效 -->
+<div id="cursor-glow"></div>
+
+<script>
+(function() {
+  // 返回顶部
+  const backToTop = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function() {
+    if (window.pageYOffset > 300) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
+    }
+  });
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // 阅读进度条
+  const progressBar = document.getElementById('reading-progress');
+  window.addEventListener('scroll', function() {
+    const scrollTop = window.pageYOffset;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    progressBar.style.width = progress + '%';
+  });
+
+  // 鼠标跟随光效
+  const cursorGlow = document.getElementById('cursor-glow');
+  let mouseX = 0, mouseY = 0;
+  let glowX = 0, glowY = 0;
+  
+  document.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+  
+  function animateGlow() {
+    glowX += (mouseX - glowX) * 0.1;
+    glowY += (mouseY - glowY) * 0.1;
+    cursorGlow.style.left = glowX + 'px';
+    cursorGlow.style.top = glowY + 'px';
+    requestAnimationFrame(animateGlow);
+  }
+  animateGlow();
+
+  // 滚动渐入动画
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+  
+  document.querySelectorAll('.feature-card, .post-item').forEach(function(el) {
+    observer.observe(el);
+  });
+})();
+</script>
