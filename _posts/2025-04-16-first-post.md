@@ -7,6 +7,8 @@ tags: ["jekyll", "github-pages", "blog", "tutorial"]
 excerpt: "记录基于 Jekyll 和 GitHub Pages 搭建个人博客的过程，以及选择这套技术栈的原因。"
 ---
 
+![Jekyll + GitHub Pages](https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80)
+
 > 这是我的个人博客的第一篇文章，主要记录搭建这个博客的初衷和技术选型。
 
 ## 为什么使用 Jekyll + GitHub Pages
