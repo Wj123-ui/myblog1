@@ -1,0 +1,7 @@
+# 忽略 Jekyll 生成的站点和依赖
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor
+Gemfile.lock

@@ -1,0 +1,13 @@
+title: AI 项目博客
+email: your-email@example.com
+description: >-
+  一个基于 Jekyll 和 GitHub Pages 搭建的个人博客，
+  记录 AI 项目学习与技术分享。
+baseurl: ""
+url: "https://yourusername.github.io"
+twitter_username: 
+github_username: yourusername
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
