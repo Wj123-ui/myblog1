@@ -2,12 +2,44 @@ title: AI 项目博客
 email: your-email@example.com
 description: >-
   一个基于 Jekyll 和 GitHub Pages 搭建的个人博客，
-  记录 AI 项目学习与技术分享。
+  记录 AI 项目学习、技术实践与经验分享。
 baseurl: ""
 url: "https://yourusername.github.io"
+author:
+  name: "你的名字"
+  email: "your-email@example.com"
+  github: "yourusername"
+  twitter: ""
+  linkedin: ""
+
 twitter_username: 
 github_username: yourusername
+linkedin_username: 
+
 theme: minima
+minima:
+  skin: dark
+  date_format: "%Y-%m-%d"
+  social_links:
+    - { platform: github,  user_url: "https://github.com/yourusername" }
+    - { platform: twitter, user_url: "https://twitter.com/yourusername" }
+
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-sitemap
+
+paginate: 5
+paginate_path: "/page:num/"
+
+show_excerpts: true
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
