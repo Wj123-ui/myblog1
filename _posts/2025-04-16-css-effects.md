@@ -7,7 +7,46 @@ tags: ["css", "animation", "jekyll", "frontend", "ui-design"]
 excerpt: "分享为 Jekyll 博客添加粒子背景、滚动动画、鼠标光效等交互特效的实现过程。"
 ---
 
-<img src="{{ site.baseurl }}/assets/images/css-effects.svg" alt="CSS Animation" class="post-header-image">
+<svg class="post-header-image" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" style="width: 100%; max-height: 400px;">
+  <defs>
+    <linearGradient id="css-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff69b4" />
+      <stop offset="100%" stop-color="#7b68ee" />
+    </linearGradient>
+    <linearGradient id="css-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f0f6fc" />
+    </linearGradient>
+    <path id="css-wave" d="M100,200 C200,100 300,300 400,200 C500,100 600,300 700,200" fill="none" />
+  </defs>
+  <rect width="800" height="400" rx="20" fill="url(#css-bg)" />
+  <g transform="translate(150, 120)">
+    <rect x="0" y="0" width="120" height="120" rx="20" fill="none" stroke="white" stroke-width="8" />
+    <rect x="40" y="40" width="40" height="40" rx="8" fill="white" />
+    <circle cx="60" cy="60" r="8" fill="#7b68ee">
+      <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite" />
+    </circle>
+  </g>
+  <circle cx="400" cy="150" r="20" fill="white">
+    <animate attributeName="cy" values="150;250;150" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="100" cy="200" r="15" fill="white">
+    <animateMotion dur="5s" repeatCount="indefinite">
+      <mpath xlink:href="#css-wave" />
+    </animateMotion>
+  </circle>
+  <path d="M150,150 L200,100 L250,150 L300,100 L350,150" stroke="white" stroke-width="4" fill="none">
+    <animate attributeName="stroke-dashoffset" values="0;-100" dur="2s" repeatCount="indefinite" />
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
+  </path>
+  <text x="400" y="320" text-anchor="middle" fill="url(#css-text)" font-family="Arial, sans-serif" font-size="48" font-weight="bold">CSS Animation Effects</text>
+  <g opacity="0.2">
+    <circle cx="50" cy="300" r="25" fill="white" />
+    <circle cx="750" cy="100" r="20" fill="white" />
+    <rect x="650" y="300" width="40" height="40" rx="10" fill="white" />
+  </g>
+</svg>
 
 > 视觉体验是博客的重要组成部分。这篇文章记录了我为博客添加各种 CSS 动画和交互特效的过程。
 

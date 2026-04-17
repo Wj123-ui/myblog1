@@ -4,7 +4,43 @@ layout: home
 
 <div class="hero-section" align="center">
   <div class="avatar-container">
-    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Electronics&backgroundColor=ffdfbf&hair=variant08&hairColor=2c1810&accessories=variant01&accessoriesColor=ffdfbf" alt="Anime Avatar" class="avatar-img">
+    <svg class="avatar-img" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width: 160px; height: 160px; border-radius: 50%; border: 8px solid rgba(13, 17, 23, 0.9); background: rgba(13, 17, 23, 0.95); box-shadow: 0 0 60px rgba(123, 104, 238, 0.6), 0 0 120px rgba(123, 104, 238, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05);">
+      <!-- 皮肤 -->
+      <circle cx="100" cy="100" r="90" fill="#ffdfbf"/>
+      <!-- 头发后部 -->
+      <path d="M30,80 Q20,120 35,150 Q30,110 40,70 Q55,30 100,25 Q145,30 160,70 Q170,110 165,150 Q180,120 170,80 Q160,20 100,15 Q40,20 30,80" fill="#2c1810"/>
+      <!-- 耳朵 -->
+      <ellipse cx="25" cy="105" rx="12" ry="18" fill="#ffdfbf"/>
+      <ellipse cx="175" cy="105" rx="12" ry="18" fill="#ffdfbf"/>
+      <!-- 脸部轮廓 -->
+      <ellipse cx="100" cy="110" rx="70" ry="75" fill="#ffdfbf"/>
+      <!-- 头发前部 -->
+      <path d="M35,60 Q50,40 100,35 Q150,40 165,60 Q155,45 100,40 Q45,45 35,60" fill="#2c1810"/>
+      <path d="M30,80 Q40,55 70,50 Q90,45 100,60 Q110,45 130,50 Q160,55 170,80 Q165,65 130,60 Q110,55 100,70 Q90,55 70,60 Q35,65 30,80" fill="#2c1810"/>
+      <!-- 眉毛 -->
+      <path d="M55,85 Q70,80 85,85" stroke="#2c1810" stroke-width="3" fill="none"/>
+      <path d="M115,85 Q130,80 145,85" stroke="#2c1810" stroke-width="3" fill="none"/>
+      <!-- 眼睛 -->
+      <ellipse cx="70" cy="100" rx="14" ry="16" fill="#1a1a1a"/>
+      <ellipse cx="130" cy="100" rx="14" ry="16" fill="#1a1a1a"/>
+      <circle cx="74" cy="95" r="5" fill="white"/>
+      <circle cx="134" cy="95" r="5" fill="white"/>
+      <circle cx="68" cy="104" r="3" fill="white" opacity="0.6"/>
+      <circle cx="128" cy="104" r="3" fill="white" opacity="0.6"/>
+      <!-- 眼镜 -->
+      <circle cx="70" cy="100" r="22" stroke="#4a3728" stroke-width="3" fill="none" opacity="0.8"/>
+      <circle cx="130" cy="100" r="22" stroke="#4a3728" stroke-width="3" fill="none" opacity="0.8"/>
+      <line x1="92" y1="100" x2="108" y2="100" stroke="#4a3728" stroke-width="3" opacity="0.8"/>
+      <line x1="48" y1="95" x2="30" y2="90" stroke="#4a3728" stroke-width="2" opacity="0.8"/>
+      <line x1="152" y1="95" x2="170" y2="90" stroke="#4a3728" stroke-width="2" opacity="0.8"/>
+      <!-- 腮红 -->
+      <ellipse cx="50" cy="125" rx="10" ry="6" fill="#ffb6c1" opacity="0.5"/>
+      <ellipse cx="150" cy="125" rx="10" ry="6" fill="#ffb6c1" opacity="0.5"/>
+      <!-- 嘴巴 -->
+      <path d="M85,135 Q100,145 115,135" stroke="#d4a574" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- 鼻子 -->
+      <circle cx="100" cy="118" r="2" fill="#d4a574" opacity="0.6"/>
+    </svg>
   </div>
   
   <h1 class="hero-title">
