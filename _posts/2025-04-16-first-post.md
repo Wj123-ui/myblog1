@@ -7,7 +7,7 @@ tags: ["jekyll", "github-pages", "blog", "tutorial"]
 excerpt: "记录基于 Jekyll 和 GitHub Pages 搭建个人博客的过程，以及选择这套技术栈的原因。"
 ---
 
-<img src="{{ '/assets/images/jekyll-github.svg' | relative_url }}" alt="Jekyll + GitHub Pages" class="post-header-image">
+<img src="{{ site.baseurl }}/assets/images/jekyll-github.svg" alt="Jekyll + GitHub Pages" class="post-header-image">
 
 > 这是我的个人博客的第一篇文章，主要记录搭建这个博客的初衷和技术选型。
 
