@@ -22,43 +22,82 @@ layout: home
   </div>
 </div>
 
+<div class="about-section glass-card">
+  <p>
+    👋 你好，我是一名电气自动化专业的学生/工程师，热衷于嵌入式系统开发和工业控制技术。
+    这里记录我的学习历程、项目实战踩坑经验，以及从示波器到烙铁的各种硬件折腾笔记。
+    欢迎一起交流 STM32、ESP32、PLC 和电路设计！
+  </p>
+</div>
+
+<div class="skills-cloud">
+  <span class="skill-tag">STM32</span>
+  <span class="skill-tag">ESP32</span>
+  <span class="skill-tag">Arduino</span>
+  <span class="skill-tag">FreeRTOS</span>
+  <span class="skill-tag">C / C++</span>
+  <span class="skill-tag">PLC</span>
+  <span class="skill-tag">Modbus</span>
+  <span class="skill-tag">Altium Designer</span>
+  <span class="skill-tag">Keil</span>
+  <span class="skill-tag">CAN 总线</span>
+  <span class="skill-tag">PCB Layout</span>
+  <span class="skill-tag">Python</span>
+</div>
+
 ---
 
+<h2 class="section-title">🔥 核心技术领域</h2>
+
 <div class="features-grid">
-  <div class="feature-card">
+  <div class="feature-card glass-card">
     <div class="feature-icon">🔌</div>
     <h3>电气自动化</h3>
     <p>PLC 编程、工控通讯、变频器调试、电气图纸设计等工业自动化技术笔记。</p>
   </div>
   
-  <div class="feature-card">
+  <div class="feature-card glass-card">
     <div class="feature-icon">🖥️</div>
     <h3>嵌入式开发</h3>
     <p>STM32 / ESP32 / Arduino 等单片机开发，RTOS、驱动开发、C/C++ 代码实战。</p>
   </div>
   
-  <div class="feature-card">
+  <div class="feature-card glass-card">
     <div class="feature-icon">⚡</div>
     <h3>硬件设计</h3>
     <p>电路原理图、PCB Layout、元器件选型、示波器与烙铁陪伴的硬件折腾记录。</p>
   </div>
 </div>
 
-## 最新文章
+---
+
+<h2 class="section-title">📝 最新文章</h2>
 
 <div class="posts-list">
-{% for post in site.posts limit:5 %}
-  <a href="{{ post.url | relative_url }}" class="post-item">
-    <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+{% for post in site.posts limit:6 %}
+  <a href="{{ post.url | relative_url }}" class="post-item glass-card">
+    <div class="post-meta">
+      <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+      {% if post.tags %}
+        <div class="post-tags">
+          {% for tag in post.tags limit:3 %}
+            <span class="post-tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <span class="post-arrow">→</span>
+    </div>
     <span class="post-title">{{ post.title }}</span>
-    <span class="post-arrow">→</span>
+    {% if post.excerpt %}
+      <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 90 }}</p>
+    {% endif %}
   </a>
 {% endfor %}
 </div>
 
 ---
 
-<div align="center" class="footer-cta">
+<div align="center" class="footer-cta glass-card">
   <p>📬 欢迎交流讨论，一起探索电气与嵌入式的无限可能！</p>
   <div class="social-links">
     <a href="https://github.com/Wj123-ui" class="social-btn" target="_blank">GitHub</a>
@@ -82,15 +121,17 @@ layout: home
   window.addEventListener('resize', resize);
   
   const particles = [];
-  const particleCount = 25;
+  const particleCount = 35;
+  const colors = ['rgba(0, 212, 255, 0.35)', 'rgba(255, 159, 67, 0.25)', 'rgba(124, 58, 237, 0.2)'];
   
   for (let i = 0; i < particleCount; i++) {
     particles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      size: Math.random() * 2 + 1
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6,
+      size: Math.random() * 2.5 + 0.5,
+      color: colors[Math.floor(Math.random() * colors.length)]
     });
   }
   
@@ -106,7 +147,7 @@ layout: home
       
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(100, 200, 255, 0.3)';
+      ctx.fillStyle = p.color;
       ctx.fill();
       
       for (let j = i + 1; j < particles.length; j++) {
@@ -114,11 +155,11 @@ layout: home
         const dy = particles[j].y - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         
-        if (dist < 100) {
+        if (dist < 120) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = 'rgba(100, 200, 255, ' + (0.1 * (1 - dist / 100)) + ')';
+          ctx.strokeStyle = 'rgba(0, 212, 255, ' + (0.08 * (1 - dist / 120)) + ')';
           ctx.stroke();
         }
       }
