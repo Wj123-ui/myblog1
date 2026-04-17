@@ -4,7 +4,7 @@ layout: home
 
 <div class="hero-section" align="center">
   <div class="avatar-container">
-    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=MyBlog" alt="My Avatar" class="avatar-img">
+    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Electronics&backgroundColor=ffdfbf&hair=variant08&hairColor=2c1810&accessories=variant01&accessoriesColor=ffdfbf" alt="Anime Avatar" class="avatar-img">
   </div>
   
   <h1 class="hero-title">
@@ -122,7 +122,7 @@ layout: home
   
   const particles = [];
   const particleCount = 35;
-  const colors = ['rgba(0, 212, 255, 0.35)', 'rgba(255, 159, 67, 0.25)', 'rgba(124, 58, 237, 0.2)'];
+  const colors = ['rgba(123, 104, 238, 0.4)', 'rgba(255, 105, 180, 0.3)', 'rgba(147, 112, 219, 0.25)'];
   
   for (let i = 0; i < particleCount; i++) {
     particles.push({
@@ -159,7 +159,7 @@ layout: home
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = 'rgba(0, 212, 255, ' + (0.08 * (1 - dist / 120)) + ')';
+          ctx.strokeStyle = 'rgba(123, 104, 238, ' + (0.1 * (1 - dist / 120)) + ')';
           ctx.stroke();
         }
       }
