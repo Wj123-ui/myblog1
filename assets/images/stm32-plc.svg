@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7b68ee" />
+      <stop offset="50%" stop-color="#9370db" />
+      <stop offset="100%" stop-color="#ff69b4" />
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f0f6fc" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="800" height="400" rx="20" fill="url(#bgGradient)" />
+  
+  <!-- STM32 开发板 -->
+  <g transform="translate(100, 100) scale(0.7)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="rgba(30, 33, 48, 0.8)" stroke="white" stroke-width="4" />
+    
+    <!-- 芯片 -->
+    <rect x="50" y="50" width="80" height="80" rx="5" fill="#2a2d3e" stroke="#7b68ee" stroke-width="3" />
+    <text x="90" y="95" text-anchor="middle" fill="#7b68ee" font-family="Consolas, monospace" font-size="12" font-weight="bold">STM32</text>
+    
+    <!-- 引脚 -->
+    <g fill="white">
+      <!-- 左侧引脚 -->
+      <rect x="0" y="20" width="10" height="5" />
+      <rect x="0" y="40" width="10" height="5" />
+      <rect x="0" y="60" width="10" height="5" />
+      <rect x="0" y="80" width="10" height="5" />
+      <rect x="0" y="100" width="10" height="5" />
+      <rect x="0" y="120" width="10" height="5" />
+      <rect x="0" y="140" width="10" height="5" />
+      <rect x="0" y="160" width="10" height="5" />
+      
+      <!-- 右侧引脚 -->
+      <rect x="290" y="20" width="10" height="5" />
+      <rect x="290" y="40" width="10" height="5" />
+      <rect x="290" y="60" width="10" height="5" />
+      <rect x="290" y="80" width="10" height="5" />
+      <rect x="290" y="100" width="10" height="5" />
+      <rect x="290" y="120" width="10" height="5" />
+      <rect x="290" y="140" width="10" height="5" />
+      <rect x="290" y="160" width="10" height="5" />
+    </g>
+    
+    <!-- LED -->
+    <circle cx="200" cy="80" r="8" fill="#00ff00">
+      <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+    
+    <!-- 连接线 -->
+    <path d="M150,150 L250,150 L250,180 L150,180 Z" stroke="#ff69b4" stroke-width="3" fill="none" />
+  </g>
+  
+  <!-- PLC 控制器 -->
+  <g transform="translate(450, 100) scale(0.7)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="rgba(30, 33, 48, 0.8)" stroke="white" stroke-width="4" />
+    
+    <!-- 显示屏 -->
+    <rect x="30" y="30" width="240" height="80" rx="5" fill="#1a1c2b" stroke="#ff69b4" stroke-width="2" />
+    <text x="150" y="75" text-anchor="middle" fill="#ff69b4" font-family="Consolas, monospace" font-size="16">PLC RUN</text>
+    
+    <!-- 按钮 -->
+    <g>
+      <circle cx="80" cy="150" r="15" fill="#2a2d3e" stroke="#7b68ee" stroke-width="3" />
+      <circle cx="150" cy="150" r="15" fill="#2a2d3e" stroke="#7b68ee" stroke-width="3" />
+      <circle cx="220" cy="150" r="15" fill="#2a2d3e" stroke="#ff69b4" stroke-width="3" />
+      
+      <text x="80" y="155" text-anchor="middle" fill="#7b68ee" font-family="Consolas, monospace" font-size="12">RUN</text>
+      <text x="150" y="155" text-anchor="middle" fill="#7b68ee" font-family="Consolas, monospace" font-size="12">STOP</text>
+      <text x="220" y="155" text-anchor="middle" fill="#ff69b4" font-family="Consolas, monospace" font-size="12">RESET</text>
+    </g>
+    
+    <!-- I/O 指示灯 -->
+    <g>
+      <circle cx="280" cy="40" r="5" fill="#00ff00" />
+      <circle cx="280" cy="60" r="5" fill="#ff9900" />
+      <circle cx="280" cy="80" r="5" fill="#ff0000" />
+    </g>
+  </g>
+  
+  <!-- 连接线 -->
+  <path d="M350,200 L450,200" stroke="white" stroke-width="3" stroke-dasharray="10,5" fill="none">
+    <animate attributeName="stroke-dashoffset" values="0;30" dur="2s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- 文字 -->
+  <text x="400" y="350" text-anchor="middle" fill="url(#textGradient)" font-family="Arial, sans-serif" font-size="48" font-weight="bold">
+    Embedded + Automation
+  </text>
+  
+  <!-- 装饰元素 -->
+  <g opacity="0.3">
+    <!-- 电路符号 -->
+    <circle cx="50" cy="50" r="10" fill="none" stroke="white" stroke-width="2" />
+    <line x1="40" y1="50" x2="60" y2="50" stroke="white" stroke-width="2" />
+    <line x1="50" y1="40" x2="50" y2="60" stroke="white" stroke-width="2" />
+    
+    <!-- 电阻符号 -->
+    <path d="M700,80 L720,80 L730,70 L740,90 L750,70 L760,90 L770,70 L780,80 L800,80" stroke="white" stroke-width="3" fill="none" />
+  </g>
+</svg>
