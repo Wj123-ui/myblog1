@@ -3,17 +3,17 @@ email: your-email@example.com
 description: >-
   一个基于 Jekyll 和 GitHub Pages 搭建的个人博客，
   记录技术学习、项目实践与经验分享。
-baseurl: ""
-url: "https://yourusername.github.io"
+baseurl: "/myblog1"
+url: "https://wj123-ui.github.io"
 author:
-  name: "你的名字"
+  name: "Wj123-ui"
   email: "your-email@example.com"
-  github: "yourusername"
+  github: "Wj123-ui"
   twitter: ""
   linkedin: ""
 
 twitter_username: 
-github_username: yourusername
+github_username: Wj123-ui
 linkedin_username: 
 
 theme: minima
@@ -21,7 +21,7 @@ minima:
   skin: dark
   date_format: "%Y-%m-%d"
   social_links:
-    - { platform: github,  user_url: "https://github.com/yourusername" }
+    - { platform: github,  user_url: "https://github.com/Wj123-ui" }
     - { platform: twitter, user_url: "https://twitter.com/yourusername" }
 
 plugins:
