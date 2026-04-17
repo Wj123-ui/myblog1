@@ -4,7 +4,7 @@ layout: home
 
 <div class="hero-section" align="center">
   <div class="avatar-container">
-    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Electronics&backgroundColor=ffdfbf&hair=variant08&hairColor=2c1810&accessories=variant01&accessoriesColor=ffdfbf" alt="Anime Avatar" class="avatar-img">
+    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=Electronics&backgroundColor=ffdfbf&hair=variant08&hairColor=2c1810&accessories=variant01&accessoriesColor=ffdfbf" alt="Anime Avatar" class="avatar-img">
   </div>
   
   <h1 class="hero-title">
