@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff69b4" />
+      <stop offset="100%" stop-color="#7b68ee" />
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f0f6fc" />
+    </linearGradient>
+    
+    <!-- 动画路径 -->
+    <path id="wavePath" d="M100,200 C200,100 300,300 400,200 C500,100 600,300 700,200" fill="none" />
+    <path id="pulsePath" d="M150,150 L200,100 L250,150 L300,100 L350,150" fill="none" />
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="800" height="400" rx="20" fill="url(#bgGradient)" />
+  
+  <!-- CSS 标志 -->
+  <g transform="translate(150, 120)">
+    <rect x="0" y="0" width="120" height="120" rx="20" fill="none" stroke="white" stroke-width="8" />
+    <rect x="40" y="40" width="40" height="40" rx="8" fill="white" />
+    <!-- 动画点 -->
+    <circle cx="60" cy="60" r="8" fill="#7b68ee">
+      <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite" />
+    </circle>
+  </g>
+  
+  <!-- 动画元素 -->
+  <circle cx="400" cy="150" r="20" fill="white">
+    <animate attributeName="cy" values="150;250;150" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- 波动画 -->
+  <circle cx="100" cy="200" r="15" fill="white">
+    <animateMotion dur="5s" repeatCount="indefinite">
+      <mpath xlink:href="#wavePath" />
+    </animateMotion>
+  </circle>
+  
+  <!-- 脉冲线 -->
+  <path d="M150,150 L200,100 L250,150 L300,100 L350,150" stroke="white" stroke-width="4" fill="none">
+    <animate attributeName="stroke-dashoffset" values="0;-100" dur="2s" repeatCount="indefinite" />
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- 文字 -->
+  <text x="400" y="320" text-anchor="middle" fill="url(#textGradient)" font-family="Arial, sans-serif" font-size="48" font-weight="bold">
+    CSS Animation Effects
+  </text>
+  
+  <!-- 装饰元素 -->
+  <g opacity="0.2">
+    <circle cx="50" cy="300" r="25" fill="white" />
+    <circle cx="750" cy="100" r="20" fill="white" />
+    <rect x="650" y="300" width="40" height="40" rx="10" fill="white" />
+  </g>
+</svg>
