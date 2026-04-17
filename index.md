@@ -5,41 +5,110 @@ layout: home
 <div class="hero-section" align="center">
   <div class="avatar-container">
     <svg class="avatar-img" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width: 160px; height: 160px; border-radius: 50%; border: 8px solid rgba(13, 17, 23, 0.9); background: rgba(13, 17, 23, 0.95); box-shadow: 0 0 60px rgba(123, 104, 238, 0.6), 0 0 120px rgba(123, 104, 238, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05);">
-      <!-- 皮肤 -->
-      <circle cx="100" cy="100" r="90" fill="#ffdfbf"/>
-      <!-- 头发后部 -->
-      <path d="M30,80 Q20,120 35,150 Q30,110 40,70 Q55,30 100,25 Q145,30 160,70 Q170,110 165,150 Q180,120 170,80 Q160,20 100,15 Q40,20 30,80" fill="#2c1810"/>
-      <!-- 耳朵 -->
-      <ellipse cx="25" cy="105" rx="12" ry="18" fill="#ffdfbf"/>
-      <ellipse cx="175" cy="105" rx="12" ry="18" fill="#ffdfbf"/>
-      <!-- 脸部轮廓 -->
-      <ellipse cx="100" cy="110" rx="70" ry="75" fill="#ffdfbf"/>
-      <!-- 头发前部 -->
-      <path d="M35,60 Q50,40 100,35 Q150,40 165,60 Q155,45 100,40 Q45,45 35,60" fill="#2c1810"/>
-      <path d="M30,80 Q40,55 70,50 Q90,45 100,60 Q110,45 130,50 Q160,55 170,80 Q165,65 130,60 Q110,55 100,70 Q90,55 70,60 Q35,65 30,80" fill="#2c1810"/>
-      <!-- 眉毛 -->
-      <path d="M55,85 Q70,80 85,85" stroke="#2c1810" stroke-width="3" fill="none"/>
-      <path d="M115,85 Q130,80 145,85" stroke="#2c1810" stroke-width="3" fill="none"/>
-      <!-- 眼睛 -->
-      <ellipse cx="70" cy="100" rx="14" ry="16" fill="#1a1a1a"/>
-      <ellipse cx="130" cy="100" rx="14" ry="16" fill="#1a1a1a"/>
-      <circle cx="74" cy="95" r="5" fill="white"/>
-      <circle cx="134" cy="95" r="5" fill="white"/>
-      <circle cx="68" cy="104" r="3" fill="white" opacity="0.6"/>
-      <circle cx="128" cy="104" r="3" fill="white" opacity="0.6"/>
-      <!-- 眼镜 -->
-      <circle cx="70" cy="100" r="22" stroke="#4a3728" stroke-width="3" fill="none" opacity="0.8"/>
-      <circle cx="130" cy="100" r="22" stroke="#4a3728" stroke-width="3" fill="none" opacity="0.8"/>
-      <line x1="92" y1="100" x2="108" y2="100" stroke="#4a3728" stroke-width="3" opacity="0.8"/>
-      <line x1="48" y1="95" x2="30" y2="90" stroke="#4a3728" stroke-width="2" opacity="0.8"/>
-      <line x1="152" y1="95" x2="170" y2="90" stroke="#4a3728" stroke-width="2" opacity="0.8"/>
-      <!-- 腮红 -->
-      <ellipse cx="50" cy="125" rx="10" ry="6" fill="#ffb6c1" opacity="0.5"/>
-      <ellipse cx="150" cy="125" rx="10" ry="6" fill="#ffb6c1" opacity="0.5"/>
-      <!-- 嘴巴 -->
-      <path d="M85,135 Q100,145 115,135" stroke="#d4a574" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <!-- 鼻子 -->
-      <circle cx="100" cy="118" r="2" fill="#d4a574" opacity="0.6"/>
+      <defs>
+        <linearGradient id="chipGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1e2130"/>
+          <stop offset="100%" stop-color="#2a2d3e"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+      <!-- PCB 基板圆盘 -->
+      <circle cx="100" cy="100" r="90" fill="#16122b" stroke="#7b68ee" stroke-width="1.5" opacity="0.4"/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#ff69b4" stroke-width="0.5" opacity="0.3" stroke-dasharray="4,4"/>
+      
+      <!-- 外圈焊盘孔 -->
+      <circle cx="100" cy="20" r="3" fill="#0d0a1f" stroke="#7b68ee" stroke-width="1.5"/>
+      <circle cx="100" cy="180" r="3" fill="#0d0a1f" stroke="#7b68ee" stroke-width="1.5"/>
+      <circle cx="20" cy="100" r="3" fill="#0d0a1f" stroke="#7b68ee" stroke-width="1.5"/>
+      <circle cx="180" cy="100" r="3" fill="#0d0a1f" stroke="#7b68ee" stroke-width="1.5"/>
+      <circle cx="43" cy="43" r="3" fill="#0d0a1f" stroke="#ff69b4" stroke-width="1.5"/>
+      <circle cx="157" cy="43" r="3" fill="#0d0a1f" stroke="#ff69b4" stroke-width="1.5"/>
+      <circle cx="43" cy="157" r="3" fill="#0d0a1f" stroke="#ff69b4" stroke-width="1.5"/>
+      <circle cx="157" cy="157" r="3" fill="#0d0a1f" stroke="#ff69b4" stroke-width="1.5"/>
+      
+      <!-- 主芯片 (STM32 风格) -->
+      <rect x="65" y="65" width="70" height="70" rx="4" fill="url(#chipGrad)" stroke="#7b68ee" stroke-width="2"/>
+      <!-- 芯片引脚 -->
+      <rect x="58" y="72" width="6" height="3" fill="#b19cd9"/>
+      <rect x="58" y="82" width="6" height="3" fill="#b19cd9"/>
+      <rect x="58" y="92" width="6" height="3" fill="#b19cd9"/>
+      <rect x="58" y="102" width="6" height="3" fill="#b19cd9"/>
+      <rect x="58" y="112" width="6" height="3" fill="#b19cd9"/>
+      <rect x="58" y="122" width="6" height="3" fill="#b19cd9"/>
+      
+      <rect x="135" y="72" width="6" height="3" fill="#b19cd9"/>
+      <rect x="135" y="82" width="6" height="3" fill="#b19cd9"/>
+      <rect x="135" y="92" width="6" height="3" fill="#b19cd9"/>
+      <rect x="135" y="102" width="6" height="3" fill="#b19cd9"/>
+      <rect x="135" y="112" width="6" height="3" fill="#b19cd9"/>
+      <rect x="135" y="122" width="6" height="3" fill="#b19cd9"/>
+      
+      <rect x="72" y="58" width="3" height="6" fill="#b19cd9"/>
+      <rect x="82" y="58" width="3" height="6" fill="#b19cd9"/>
+      <rect x="92" y="58" width="3" height="6" fill="#b19cd9"/>
+      <rect x="102" y="58" width="3" height="6" fill="#b19cd9"/>
+      <rect x="112" y="58" width="3" height="6" fill="#b19cd9"/>
+      <rect x="122" y="58" width="3" height="6" fill="#b19cd9"/>
+      
+      <rect x="72" y="135" width="3" height="6" fill="#b19cd9"/>
+      <rect x="82" y="135" width="3" height="6" fill="#b19cd9"/>
+      <rect x="92" y="135" width="3" height="6" fill="#b19cd9"/>
+      <rect x="102" y="135" width="3" height="6" fill="#b19cd9"/>
+      <rect x="112" y="135" width="3" height="6" fill="#b19cd9"/>
+      <rect x="122" y="135" width="3" height="6" fill="#b19cd9"/>
+      
+      <!-- 芯片中心圆点 -->
+      <circle cx="100" cy="100" r="12" fill="#7b68ee" opacity="0.3"/>
+      <circle cx="100" cy="100" r="6" fill="#ff69b4" filter="url(#glow)"/>
+      
+      <!-- 走线 -->
+      <path d="M43,43 L65,72" stroke="#7b68ee" stroke-width="1.5" fill="none" opacity="0.8"/>
+      <path d="M157,43 L135,72" stroke="#ff69b4" stroke-width="1.5" fill="none" opacity="0.8"/>
+      <path d="M43,157 L65,128" stroke="#ff69b4" stroke-width="1.5" fill="none" opacity="0.8"/>
+      <path d="M157,157 L135,128" stroke="#7b68ee" stroke-width="1.5" fill="none" opacity="0.8"/>
+      
+      <!-- 电阻 -->
+      <rect x="25" y="95" width="20" height="10" fill="none" stroke="#d4c2ff" stroke-width="1.5"/>
+      <line x1="20" y1="100" x2="25" y2="100" stroke="#d4c2ff" stroke-width="1.5"/>
+      <line x1="45" y1="100" x2="58" y2="100" stroke="#d4c2ff" stroke-width="1.5"/>
+      
+      <!-- 电容 -->
+      <line x1="150" y1="95" x2="150" y2="105" stroke="#d4c2ff" stroke-width="1.5"/>
+      <line x1="155" y1="95" x2="155" y2="105" stroke="#d4c2ff" stroke-width="1.5"/>
+      <line x1="142" y1="100" x2="150" y2="100" stroke="#d4c2ff" stroke-width="1.5"/>
+      <line x1="155" y1="100" x2="170" y2="100" stroke="#d4c2ff" stroke-width="1.5"/>
+      
+      <!-- LED -->
+      <circle cx="100" cy="30" r="5" fill="#00ff88" filter="url(#glow)"/>
+      <line x1="100" y1="35" x2="100" y2="58" stroke="#7b68ee" stroke-width="1.5" opacity="0.8"/>
+      
+      <!-- 晶体振荡器 -->
+      <rect x="90" y="142" width="20" height="12" rx="2" fill="none" stroke="#ff69b4" stroke-width="1.5"/>
+      <line x1="92" y1="135" x2="92" y2="142" stroke="#ff69b4" stroke-width="1.5"/>
+      <line x1="108" y1="135" x2="108" y2="142" stroke="#ff69b4" stroke-width="1.5"/>
+      
+      <!-- 过孔 / 焊点 -->
+      <circle cx="60" cy="60" r="2.5" fill="#7b68ee" opacity="0.6"/>
+      <circle cx="140" cy="60" r="2.5" fill="#ff69b4" opacity="0.6"/>
+      <circle cx="60" cy="140" r="2.5" fill="#ff69b4" opacity="0.6"/>
+      <circle cx="140" cy="140" r="2.5" fill="#7b68ee" opacity="0.6"/>
+      <circle cx="100" cy="170" r="2.5" fill="#7b68ee" opacity="0.6"/>
+      
+      <!-- 丝印文字 -->
+      <text x="100" y="88" text-anchor="middle" fill="#b19cd9" font-family="Consolas, monospace" font-size="6" font-weight="bold">STM32</text>
+      <text x="100" y="125" text-anchor="middle" fill="#7b68ee" font-family="Consolas, monospace" font-size="5" opacity="0.7">⚡ MCU</text>
+      
+      <!-- 电流脉冲动画 -->
+      <circle cx="100" cy="100" r="18" fill="none" stroke="#ff69b4" stroke-width="1" opacity="0.5">
+        <animate attributeName="r" values="18;30;18" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
     </svg>
   </div>
   
