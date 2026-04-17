@@ -1,8 +1,8 @@
-title: 个人博客
+title: 电气自动化与嵌入式开发
 email: your-email@example.com
 description: >-
   一个基于 Jekyll 和 GitHub Pages 搭建的个人博客，
-  记录技术学习、项目实践与经验分享。
+  记录电气自动化、嵌入式系统、单片机开发、PLC 编程与硬件设计的学习与实践。
 baseurl: "/myblog1"
 url: "https://wj123-ui.github.io"
 author:

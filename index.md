@@ -8,17 +8,17 @@ layout: home
   </div>
   
   <h1 class="hero-title">
-    <span class="gradient-text">✨ 个人博客</span>
+    <span class="gradient-text">⚡ 电气自动化与嵌入式</span>
   </h1>
   
   <p class="hero-subtitle">
-    记录技术成长之路 · 分享学习心得 · 沉淀项目经验
+    玩转单片机 · 折腾 PLC · 记录硬件与代码的碰撞
   </p>
   
   <div class="hero-badges">
-    <span class="badge">📝 技术笔记</span>
-    <span class="badge">🛠️ 项目实战</span>
-    <span class="badge">💡 经验分享</span>
+    <span class="badge">🔌 电气自动化</span>
+    <span class="badge">🖥️ 嵌入式开发</span>
+    <span class="badge">⚙️ 硬件设计</span>
   </div>
 </div>
 
@@ -26,21 +26,21 @@ layout: home
 
 <div class="features-grid">
   <div class="feature-card">
-    <div class="feature-icon">📝</div>
-    <h3>技术学习笔记</h3>
-    <p>编程语言、框架工具、系统设计等理论知识整理，从入门到进阶的系统化学习路径。</p>
+    <div class="feature-icon">🔌</div>
+    <h3>电气自动化</h3>
+    <p>PLC 编程、工控通讯、变频器调试、电气图纸设计等工业自动化技术笔记。</p>
   </div>
   
   <div class="feature-card">
-    <div class="feature-icon">🛠️</div>
-    <h3>项目实践</h3>
-    <p>从想法到落地的完整项目记录，包含代码、思路、踩坑与解决方案。</p>
+    <div class="feature-icon">🖥️</div>
+    <h3>嵌入式开发</h3>
+    <p>STM32 / ESP32 / Arduino 等单片机开发，RTOS、驱动开发、C/C++ 代码实战。</p>
   </div>
   
   <div class="feature-card">
-    <div class="feature-icon">💡</div>
-    <h3>技术分享</h3>
-    <p>工具使用、最佳实践与踩坑总结，让技术成长更高效。</p>
+    <div class="feature-icon">⚡</div>
+    <h3>硬件设计</h3>
+    <p>电路原理图、PCB Layout、元器件选型、示波器与烙铁陪伴的硬件折腾记录。</p>
   </div>
 </div>
 
@@ -59,7 +59,7 @@ layout: home
 ---
 
 <div align="center" class="footer-cta">
-  <p>📬 欢迎交流讨论，一起探索技术的无限可能！</p>
+  <p>📬 欢迎交流讨论，一起探索电气与嵌入式的无限可能！</p>
   <div class="social-links">
     <a href="https://github.com/Wj123-ui" class="social-btn" target="_blank">GitHub</a>
     <a href="mailto:your-email@example.com" class="social-btn">Email</a>
