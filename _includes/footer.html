@@ -1,0 +1,54 @@
+<footer class="site-footer glass-card">
+  <div class="footer-content">
+    <div style="text-align: center; padding: 40px 20px;">
+      <div style="margin-bottom: 24px;">
+        <span style="font-size: 1.8em; margin-right: 15px;">📬</span>
+        <span style="font-size: 1.8em; margin-right: 15px;">💬</span>
+        <span style="font-size: 1.8em;">🚀</span>
+      </div>
+      <p style="font-size: 1.3em; margin-bottom: 32px; color: #d4c2ff; font-weight: 600; line-height: 1.6;">
+        欢迎交流讨论，一起探索电气与嵌入式的无限可能！
+      </p>
+      <div class="social-links">
+        <a href="https://github.com/{{ site.github_username }}" class="social-btn" target="_blank">
+          <span style="margin-right: 8px;">🐙</span> GitHub
+        </a>
+        <a href="mailto:{{ site.email }}" class="social-btn">
+          <span style="margin-right: 8px;">📧</span> Email
+        </a>
+        <a href="{{ site.url }}{{ site.baseurl }}" class="social-btn" style="background: linear-gradient(135deg, #ff69b4 0%, #7b68ee 100%);">
+          <span style="margin-right: 8px;">🌐</span> 博客主页
+        </a>
+      </div>
+      <p style="margin-top: 32px; color: #a8b3cf; font-size: 0.95em; line-height: 1.6;">
+        © {{ site.time | date: '%Y' }} {{ site.title }} · 基于 Jekyll + GitHub Pages 构建<br>
+        <span style="opacity: 0.7; font-size: 0.9em;">主题：深色玻璃拟态 · 配色：动漫紫粉</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+.site-footer {
+  margin: 80px auto 30px;
+  max-width: 1000px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.footer-content {
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    margin: 60px auto 20px;
+    border-radius: 20px;
+  }
+  
+  .social-btn {
+    padding: 14px 28px;
+    font-size: 1em;
+  }
+}
+</style>
