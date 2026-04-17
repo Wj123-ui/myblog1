@@ -4,21 +4,21 @@ layout: home
 
 <div class="hero-section" align="center">
   <div class="avatar-container">
-    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=AI-Blog" alt="AI Avatar" class="avatar-img">
+    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=MyBlog" alt="My Avatar" class="avatar-img">
   </div>
   
   <h1 class="hero-title">
-    <span class="gradient-text">🤖 AI 项目博客</span>
+    <span class="gradient-text">✨ 个人博客</span>
   </h1>
   
   <p class="hero-subtitle">
-    记录 AI 学习之旅 · 分享技术实践 · 沉淀项目经验
+    记录技术成长之路 · 分享学习心得 · 沉淀项目经验
   </p>
   
   <div class="hero-badges">
-    <span class="badge">🧠 深度学习</span>
+    <span class="badge">📝 技术笔记</span>
     <span class="badge">🛠️ 项目实战</span>
-    <span class="badge">💡 技术分享</span>
+    <span class="badge">💡 经验分享</span>
   </div>
 </div>
 
@@ -26,9 +26,9 @@ layout: home
 
 <div class="features-grid">
   <div class="feature-card">
-    <div class="feature-icon">🧠</div>
-    <h3>AI 学习笔记</h3>
-    <p>深度学习、机器学习、大模型等理论知识整理，从入门到进阶的系统化学习路径。</p>
+    <div class="feature-icon">📝</div>
+    <h3>技术学习笔记</h3>
+    <p>编程语言、框架工具、系统设计等理论知识整理，从入门到进阶的系统化学习路径。</p>
   </div>
   
   <div class="feature-card">
@@ -59,7 +59,7 @@ layout: home
 ---
 
 <div align="center" class="footer-cta">
-  <p>📬 欢迎交流讨论，一起探索 AI 的无限可能！</p>
+  <p>📬 欢迎交流讨论，一起探索技术的无限可能！</p>
   <div class="social-links">
     <a href="https://github.com/Wj123-ui" class="social-btn" target="_blank">GitHub</a>
     <a href="mailto:your-email@example.com" class="social-btn">Email</a>
