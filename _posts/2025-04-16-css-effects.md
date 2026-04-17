@@ -7,7 +7,7 @@ tags: ["css", "animation", "jekyll", "frontend", "ui-design"]
 excerpt: "分享为 Jekyll 博客添加粒子背景、滚动动画、鼠标光效等交互特效的实现过程。"
 ---
 
-<img src="{{ '/assets/images/css-effects.svg' | relative_url }}" alt="CSS Animation" class="post-header-image">
+<img src="{{ site.baseurl }}/assets/images/css-effects.svg" alt="CSS Animation" class="post-header-image">
 
 > 视觉体验是博客的重要组成部分。这篇文章记录了我为博客添加各种 CSS 动画和交互特效的过程。
 
