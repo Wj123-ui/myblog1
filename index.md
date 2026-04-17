@@ -235,7 +235,7 @@ layout: home
 </div>
 
 <div style="text-align: center; margin: 40px 0;">
-  <a href="/archive" style="display: inline-block; padding: 12px 30px; background: rgba(123, 104, 238, 0.15); border: 1px solid rgba(123, 104, 238, 0.3); border-radius: 25px; color: #b19cd9; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+  <a href="{{ '/archive/' | relative_url }}" style="display: inline-block; padding: 12px 30px; background: rgba(123, 104, 238, 0.15); border: 1px solid rgba(123, 104, 238, 0.3); border-radius: 25px; color: #b19cd9; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
     查看所有文章 →
   </a>
 </div>
