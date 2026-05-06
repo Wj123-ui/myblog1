@@ -1,90 +1,88 @@
 <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
 
-<!-- 返回顶部按钮 -->
-<button id="back-to-top" title="返回顶部">↑</button>
+<button id="back-to-top" title="返回顶部" aria-label="返回页面顶部">↑</button>
 
-<!-- 阅读进度条 -->
-<div id="reading-progress"></div>
+<div id="reading-progress" aria-hidden="true"></div>
 
-<!-- 鼠标跟随光效 -->
-<div id="cursor-glow"></div>
+<div id="cursor-glow" aria-hidden="true"></div>
 
 <script>
 (function() {
-  // 返回顶部
-  const backToTop = document.getElementById('back-to-top');
+  var backToTop = document.getElementById('back-to-top');
+  var progressBar = document.getElementById('reading-progress');
+  var cursorGlow = document.getElementById('cursor-glow');
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   window.addEventListener('scroll', function() {
-    if (window.pageYOffset > 300) {
+    var scrollY = window.pageYOffset;
+    if (scrollY > 300) {
       backToTop.classList.add('visible');
     } else {
       backToTop.classList.remove('visible');
     }
+
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (docHeight > 0) {
+      progressBar.style.width = (scrollY / docHeight) * 100 + '%';
+    }
   });
+
   backToTop.addEventListener('click', function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
   });
 
-  // 阅读进度条
-  const progressBar = document.getElementById('reading-progress');
-  window.addEventListener('scroll', function() {
-    const scrollTop = window.pageYOffset;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = (scrollTop / docHeight) * 100;
-    progressBar.style.width = progress + '%';
-  });
+  if (!prefersReduced) {
+    var mouseX = 0, mouseY = 0;
+    var glowX = 0, glowY = 0;
 
-  // 鼠标跟随光效
-  const cursorGlow = document.getElementById('cursor-glow');
-  let mouseX = 0, mouseY = 0;
-  let glowX = 0, glowY = 0;
-  
-  document.addEventListener('mousemove', function(e) {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
-  
-  function animateGlow() {
-    glowX += (mouseX - glowX) * 0.1;
-    glowY += (mouseY - glowY) * 0.1;
-    cursorGlow.style.left = glowX + 'px';
-    cursorGlow.style.top = glowY + 'px';
-    requestAnimationFrame(animateGlow);
+    document.addEventListener('mousemove', function(e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateGlow() {
+      glowX += (mouseX - glowX) * 0.1;
+      glowY += (mouseY - glowY) * 0.1;
+      cursorGlow.style.left = glowX + 'px';
+      cursorGlow.style.top = glowY + 'px';
+      requestAnimationFrame(animateGlow);
+    }
+    animateGlow();
+  } else {
+    cursorGlow.style.display = 'none';
   }
-  animateGlow();
 
-  // 滚动渐入动画
-  const observerOptions = {
+  var observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
   };
-  
-  const observer = new IntersectionObserver(function(entries) {
+
+  var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
       }
     });
   }, observerOptions);
-  
+
   document.querySelectorAll('.feature-card, .post-item').forEach(function(el) {
     observer.observe(el);
   });
 
-  // 平滑滚动到锚点链接
   document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
     anchor.addEventListener('click', function(e) {
-      const targetId = this.getAttribute('href');
+      var targetId = this.getAttribute('href');
       if (targetId === '#') return;
-      
-      const targetElement = document.querySelector(targetId);
+
+      var targetElement = document.querySelector(targetId);
       if (targetElement) {
         e.preventDefault();
-        const headerHeight = document.querySelector('.site-header')?.offsetHeight || 80;
-        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
-        
+        var headerHeight = document.querySelector('.site-header')?.offsetHeight || 80;
+        var targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+
         window.scrollTo({
           top: targetPosition,
-          behavior: 'smooth'
+          behavior: prefersReduced ? 'auto' : 'smooth'
         });
       }
     });
