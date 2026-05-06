@@ -1,64 +1,77 @@
-<header class="site-header glass-card">
+<header class="site-header glass-card" role="banner">
   <div class="header-container">
-    <!-- Logo / Site Title -->
-    <a href="{{ '/' | relative_url }}" class="site-title">
-      <span class="logo-icon">⚡</span>
+    <a href="{{ '/' | relative_url }}" class="site-title" aria-label="返回首页">
+      <span class="logo-icon" aria-hidden="true">⚡</span>
       <span class="title-text">{{ site.title }}</span>
     </a>
 
-    <!-- Desktop Navigation -->
-    <nav class="desktop-nav">
+    <nav class="desktop-nav" aria-label="主导航">
       <ul class="nav-list">
-        <li><a href="{{ '/' | relative_url }}" class="nav-link">🏠 首页</a></li>
+        <li><a href="{{ '/' | relative_url }}" class="nav-link" aria-current="page">🏠 首页</a></li>
         <li><a href="{{ '/archive' | relative_url }}" class="nav-link">📚 文章归档</a></li>
         <li><a href="{{ '/about' | relative_url }}" class="nav-link">👤 关于</a></li>
         <li><a href="{{ '/projects' | relative_url }}" class="nav-link">🔧 项目</a></li>
-        <li><a href="{{ site.github_username | prepend: 'https://github.com/' }}" class="nav-link" target="_blank">🐙 GitHub</a></li>
+        <li><a href="{{ site.github_username | prepend: 'https://github.com/' }}" class="nav-link" target="_blank" rel="noopener" aria-label="GitHub (新窗口打开)">🐙 GitHub</a></li>
       </ul>
     </nav>
 
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-toggle" aria-label="Toggle menu">
-      <span class="toggle-bar"></span>
-      <span class="toggle-bar"></span>
-      <span class="toggle-bar"></span>
+    <button class="mobile-toggle" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-nav">
+      <span class="toggle-bar" aria-hidden="true"></span>
+      <span class="toggle-bar" aria-hidden="true"></span>
+      <span class="toggle-bar" aria-hidden="true"></span>
     </button>
   </div>
 
-  <!-- Mobile Navigation -->
-  <nav class="mobile-nav">
+  <nav class="mobile-nav" id="mobile-nav" aria-label="移动端导航">
     <ul class="mobile-nav-list">
       <li><a href="{{ '/' | relative_url }}" class="mobile-nav-link">🏠 首页</a></li>
       <li><a href="{{ '/archive' | relative_url }}" class="mobile-nav-link">📚 文章归档</a></li>
       <li><a href="{{ '/about' | relative_url }}" class="mobile-nav-link">👤 关于</a></li>
       <li><a href="{{ '/projects' | relative_url }}" class="mobile-nav-link">🔧 项目</a></li>
-      <li><a href="{{ site.github_username | prepend: 'https://github.com/' }}" class="mobile-nav-link" target="_blank">🐙 GitHub</a></li>
+      <li><a href="{{ site.github_username | prepend: 'https://github.com/' }}" class="mobile-nav-link" target="_blank" rel="noopener">🐙 GitHub</a></li>
     </ul>
   </nav>
 </header>
 
 <script>
 (function() {
-  const toggle = document.querySelector('.mobile-toggle');
-  const mobileNav = document.querySelector('.mobile-nav');
-  const body = document.body;
+  var toggle = document.querySelector('.mobile-toggle');
+  var mobileNav = document.getElementById('mobile-nav');
+  var body = document.body;
 
   if (toggle) {
     toggle.addEventListener('click', function() {
-      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      var isExpanded = toggle.getAttribute('aria-expanded') === 'true';
       toggle.setAttribute('aria-expanded', !isExpanded);
+      toggle.setAttribute('aria-label', isExpanded ? '打开菜单' : '关闭菜单');
       mobileNav.classList.toggle('active');
-      body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+      if (mobileNav.classList.contains('active')) {
+        body.style.overflow = 'hidden';
+        document.querySelector('.mobile-nav-link').focus();
+      } else {
+        body.style.overflow = '';
+        toggle.focus();
+      }
     });
 
-    // Close mobile menu when clicking a link
-    document.querySelectorAll('.mobile-nav-link').forEach(link => {
-      link.addEventListener('click', () => {
+    document.querySelectorAll('.mobile-nav-link').forEach(function(link) {
+      link.addEventListener('click', function() {
         toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', '打开菜单');
         mobileNav.classList.remove('active');
         body.style.overflow = '';
       });
     });
   }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', '打开菜单');
+      mobileNav.classList.remove('active');
+      body.style.overflow = '';
+      toggle.focus();
+    }
+  });
 })();
 </script>

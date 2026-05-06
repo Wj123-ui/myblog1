@@ -4,7 +4,7 @@ layout: home
 
 <div class="hero-section" align="center">
   <div class="avatar-container">
-    <svg class="avatar-img" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width: 160px; height: 160px; border-radius: 50%; border: 8px solid rgba(13, 17, 23, 0.9); background: rgba(13, 17, 23, 0.95); box-shadow: 0 0 60px rgba(123, 104, 238, 0.6), 0 0 120px rgba(123, 104, 238, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05);">
+    <svg class="avatar-img" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="STM32 芯片头像">
       <defs>
         <linearGradient id="chipGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#1e2130"/>
@@ -129,20 +129,18 @@ layout: home
 </div>
 
 <div class="about-section glass-card">
-  <p style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
-    <span style="font-size: 1.5em;">👋</span>
+  <p class="about-intro">
+    <span class="about-icon">👋</span>
     <span>你好，我是一名电气自动化专业的学生/工程师，热衷于嵌入式系统开发和工业控制技术。</span>
-    <span style="font-size: 1.5em;">🔧</span>
+    <span class="about-icon">🔧</span>
     <span>这里记录我的学习历程、项目实战踩坑经验，以及从示波器到烙铁的各种硬件折腾笔记。</span>
-    <span style="font-size: 1.5em;">🚀</span>
+    <span class="about-icon">🚀</span>
     <span>欢迎一起交流 STM32、ESP32、PLC 和电路设计！</span>
   </p>
 </div>
 
-<div style="text-align: center; margin: 30px 0;">
-  <h3 style="color: #b19cd9; margin-bottom: 20px; font-size: 1.1em;">
-    🛠️ 技术栈与工具
-  </h3>
+<div class="skills-header">
+  <h3>🛠️ 技术栈与工具</h3>
 </div>
 
 <div class="skills-cloud">
@@ -170,35 +168,35 @@ layout: home
 
 <div class="features-grid">
   <div class="feature-card glass-card">
-    <div class="feature-icon">⚡</div>
+    <div class="feature-icon" aria-hidden="true">⚡</div>
     <h3>电气自动化</h3>
     <p>PLC 编程、工控通讯、变频器调试、电气图纸设计等工业自动化技术笔记。涵盖西门子、三菱等主流 PLC 平台。</p>
-    <div style="margin-top: 20px; font-size: 0.9em; color: #a8b3cf;">
-      <span style="display: inline-block; margin-right: 10px;">🏭 工业控制</span>
-      <span style="display: inline-block; margin-right: 10px;">🔧 设备调试</span>
-      <span style="display: inline-block;">📊 数据采集</span>
+    <div class="feature-card-tags">
+      <span>🏭 工业控制</span>
+      <span>🔧 设备调试</span>
+      <span>📊 数据采集</span>
     </div>
   </div>
   
   <div class="feature-card glass-card">
-    <div class="feature-icon">💻</div>
+    <div class="feature-icon" aria-hidden="true">💻</div>
     <h3>嵌入式开发</h3>
     <p>STM32 / ESP32 / Arduino 等单片机开发，RTOS、驱动开发、C/C++ 代码实战。从寄存器操作到系统框架全面覆盖。</p>
-    <div style="margin-top: 20px; font-size: 0.9em; color: #a8b3cf;">
-      <span style="display: inline-block; margin-right: 10px;">🖥️ 单片机</span>
-      <span style="display: inline-block; margin-right: 10px;">⚙️ 驱动开发</span>
-      <span style="display: inline-block;">🔗 通信协议</span>
+    <div class="feature-card-tags">
+      <span>🖥️ 单片机</span>
+      <span>⚙️ 驱动开发</span>
+      <span>🔗 通信协议</span>
     </div>
   </div>
   
   <div class="feature-card glass-card">
-    <div class="feature-icon">🔧</div>
+    <div class="feature-icon" aria-hidden="true">🔧</div>
     <h3>硬件设计</h3>
     <p>电路原理图、PCB Layout、元器件选型、示波器与烙铁陪伴的硬件折腾记录。从模拟电路到高速数字电路设计。</p>
-    <div style="margin-top: 20px; font-size: 0.9em; color: #a8b3cf;">
-      <span style="display: inline-block; margin-right: 10px;">📐 电路设计</span>
-      <span style="display: inline-block; margin-right: 10px;">🔌 PCB Layout</span>
-      <span style="display: inline-block;">🔍 调试测试</span>
+    <div class="feature-card-tags">
+      <span>📐 电路设计</span>
+      <span>🔌 PCB Layout</span>
+      <span>🔍 调试测试</span>
     </div>
   </div>
 </div>
@@ -226,7 +224,7 @@ layout: home
       <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 100 }}</p>
     {% endif %}
     <div style="display: flex; align-items: center; margin-top: 10px;">
-      <span style="font-size: 0.85em; color: #8b949e; background: rgba(123, 104, 238, 0.1); padding: 3px 10px; border-radius: 12px; border: 1px solid rgba(123, 104, 238, 0.2);">
+      <span class="read-more-tag">
         📖 阅读全文
       </span>
     </div>
@@ -235,7 +233,7 @@ layout: home
 </div>
 
 <div style="text-align: center; margin: 40px 0;">
-  <a href="{{ '/archive/' | relative_url }}" style="display: inline-block; padding: 12px 30px; background: rgba(123, 104, 238, 0.15); border: 1px solid rgba(123, 104, 238, 0.3); border-radius: 25px; color: #b19cd9; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+  <a href="{{ '/archive/' | relative_url }}" class="cta-link">
     查看所有文章 →
   </a>
 </div>
@@ -243,11 +241,29 @@ layout: home
 ---
 
 <div align="center" class="footer-cta glass-card">
-  <div style="margin-bottom: 24px;">
-    <span style="font-size: 1.8em; margin-right: 15px;">📬</span>
-    <span style="font-size: 1.8em; margin-right: 15px;">💬</span>
-    <span style="font-size: 1.8em;">🚀</span>
+  <div class="footer-emoji-row">
+    <span aria-hidden="true">📬</span>
+    <span aria-hidden="true">💬</span>
+    <span aria-hidden="true">🚀</span>
   </div>
+  <p style="font-size: 1.4em; margin-bottom: 32px; color: var(--color-lighter); font-weight: 600;">
+    欢迎交流讨论，一起探索电气与嵌入式的无限可能！
+  </p>
+  <div class="social-links">
+    <a href="https://github.com/Wj123-ui" class="social-btn" target="_blank" rel="noopener">
+      <span aria-hidden="true" style="margin-right: 8px;">🐙</span> GitHub
+    </a>
+    <a href="mailto:your-email@example.com" class="social-btn">
+      <span aria-hidden="true" style="margin-right: 8px;">📧</span> Email
+    </a>
+    <a href="https://wj123-ui.github.io/myblog1" class="social-btn social-btn--alt">
+      <span aria-hidden="true" style="margin-right: 8px;">🌐</span> 博客主页
+    </a>
+  </div>
+  <p style="margin-top: 32px; color: var(--color-text-secondary); font-size: 0.95em;">
+    &copy; {{ site.time | date: '%Y' }} {{ site.title }} &middot; 基于 Jekyll + GitHub Pages 构建
+  </p>
+</div>
   <p style="font-size: 1.4em; margin-bottom: 32px; color: #d4c2ff; font-weight: 600;">
     欢迎交流讨论，一起探索电气与嵌入式的无限可能！
   </p>
@@ -267,8 +283,7 @@ layout: home
   </p>
 </div>
 
-<!-- 粒子动画背景 -->
-<canvas id="particles-canvas"></canvas>
+<!-- 粒子动画与3D倾斜 -->
 
 <script>
 (function() {
