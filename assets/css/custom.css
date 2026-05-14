@@ -733,6 +733,21 @@ body::before {
   }
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .feature-card.visible {
   opacity: 1;
   transform: translateY(0);
@@ -1848,6 +1863,17 @@ figcaption {
   padding: 3px 10px;
   border-radius: var(--radius-md);
   border: 1px solid rgba(201, 168, 76, 0.2);
+}
+
+.read-more-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.cta-wrapper {
+  text-align: center;
+  margin: 40px 0;
 }
 
 /* 技能标签区域标题 */
