@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
   <defs>
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ff69b4" />
-      <stop offset="100%" stop-color="#7b68ee" />
+      <stop offset="0%" stop-color="#8b6914" />
+      <stop offset="100%" stop-color="#c9a84c" />
     </linearGradient>
     <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#ffffff" />
@@ -22,7 +22,7 @@
     <rect x="0" y="0" width="120" height="120" rx="20" fill="none" stroke="white" stroke-width="8" />
     <rect x="40" y="40" width="40" height="40" rx="8" fill="white" />
     <!-- 动画点 -->
-    <circle cx="60" cy="60" r="8" fill="#7b68ee">
+    <circle cx="60" cy="60" r="8" fill="#c9a84c">
       <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite" />
     </circle>
   </g>
