@@ -6,9 +6,9 @@
   --color-accent: #9370db;
   --color-light: #b19cd9;
   --color-lighter: #d4c2ff;
-  --color-dark: #0a0818;
-  --color-darker: #16122b;
-  --color-darkest: #0d0a1f;
+  --color-dark: #020010;
+  --color-darker: #060618;
+  --color-darkest: #01000a;
 
   /* 语义色彩令牌 */
   --color-surface: rgba(30, 33, 48, 0.4);
@@ -74,19 +74,44 @@
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
 }
 
-/* 全局深色基底增强 */
+/* 全局深空星空背景 */
 html, body {
   background: 
-    /* 精细网格背景 */
-    linear-gradient(to right, rgba(123, 104, 238, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(123, 104, 238, 0.02) 1px, transparent 1px),
-    /* 优雅的径向渐变 */
-    radial-gradient(ellipse at 20% 15%, rgba(123, 104, 238, 0.06) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 80%, rgba(255, 105, 180, 0.04) 0%, transparent 45%),
-    radial-gradient(ellipse at 40% 60%, rgba(147, 112, 219, 0.03) 0%, transparent 40%),
-    /* 主背景渐变 */
-    linear-gradient(160deg, #0a0818 0%, #16122b 40%, #0d0a1f 100%);
-  background-size: 80px 80px, 80px 80px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    /* 星空微光点阵 */
+    radial-gradient(1px 1px at 10% 8%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 22% 15%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 35% 7%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 48% 22%, rgba(255, 255, 255, 0.25), transparent),
+    radial-gradient(1px 1px at 55% 12%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 62% 6%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 70% 18%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 78% 10%, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 85% 20%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 92% 14%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(2px 2px at 15% 35%, rgba(180, 190, 255, 0.5), transparent),
+    radial-gradient(2px 2px at 40% 45%, rgba(200, 180, 255, 0.4), transparent),
+    radial-gradient(2px 2px at 60% 50%, rgba(180, 210, 255, 0.45), transparent),
+    radial-gradient(2px 2px at 80% 40%, rgba(210, 190, 255, 0.4), transparent),
+    radial-gradient(2px 2px at 25% 60%, rgba(190, 200, 255, 0.35), transparent),
+    radial-gradient(2px 2px at 50% 65%, rgba(200, 220, 255, 0.4), transparent),
+    radial-gradient(2px 2px at 72% 58%, rgba(180, 200, 255, 0.35), transparent),
+    radial-gradient(3px 3px at 18% 78%, rgba(180, 210, 255, 0.45), transparent),
+    radial-gradient(3px 3px at 45% 85%, rgba(200, 190, 255, 0.4), transparent),
+    radial-gradient(3px 3px at 68% 75%, rgba(210, 200, 255, 0.45), transparent),
+    /* 星云光晕 */
+    radial-gradient(ellipse at 25% 20%, rgba(80, 60, 160, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 35%, rgba(60, 40, 130, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 65%, rgba(100, 50, 140, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 75%, rgba(70, 50, 150, 0.05) 0%, transparent 50%),
+    /* 深邃的宇宙渐变 */
+    linear-gradient(175deg, #020010 0%, #060618 20%, #0a0a25 40%, #08081e 60%, #040415 80%, #020010 100%);
+  background-size: 
+    300px 300px, 300px 300px, 300px 300px, 300px 300px,
+    300px 300px, 300px 300px, 300px 300px, 300px 300px,
+    300px 300px, 300px 300px, 400px 400px, 400px 400px,
+    400px 400px, 400px 400px, 400px 400px, 400px 400px,
+    400px 400px, 500px 500px, 500px 500px, 500px 500px,
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
   color: #f0f6fc;
   min-height: 100vh;
@@ -100,7 +125,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* 装饰性电路图案 */
+/* 星云纹理叠加 */
 body::before {
   content: '';
   position: fixed;
@@ -109,9 +134,23 @@ body::before {
   width: 100%;
   height: 100%;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(123, 104, 238, 0.02) 0%, transparent 50%),
-    radial-gradient(circle at 90% 40%, rgba(255, 105, 180, 0.015) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(147, 112, 219, 0.02) 0%, transparent 50%);
+    radial-gradient(2px 2px at 5% 3%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 12% 8%, rgba(220, 230, 255, 0.25), transparent),
+    radial-gradient(1px 1px at 25% 5%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(2px 2px at 38% 10%, rgba(200, 220, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 50% 4%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(2px 2px at 65% 9%, rgba(210, 230, 255, 0.25), transparent),
+    radial-gradient(1px 1px at 78% 6%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(2px 2px at 90% 12%, rgba(190, 210, 255, 0.3), transparent),
+    radial-gradient(3px 3px at 8% 92%, rgba(180, 200, 255, 0.35), transparent),
+    radial-gradient(3px 3px at 20% 88%, rgba(210, 220, 255, 0.3), transparent),
+    radial-gradient(3px 3px at 35% 94%, rgba(190, 210, 255, 0.35), transparent),
+    radial-gradient(3px 3px at 55% 90%, rgba(200, 220, 255, 0.3), transparent),
+    radial-gradient(3px 3px at 72% 95%, rgba(180, 200, 255, 0.35), transparent),
+    radial-gradient(3px 3px at 88% 91%, rgba(210, 230, 255, 0.3), transparent),
+    radial-gradient(circle at 10% 25%, rgba(80, 60, 160, 0.015) 0%, transparent 50%),
+    radial-gradient(circle at 90% 55%, rgba(60, 40, 140, 0.01) 0%, transparent 50%),
+    radial-gradient(circle at 45% 85%, rgba(90, 50, 150, 0.012) 0%, transparent 50%);
   z-index: -3;
   pointer-events: none;
 }
@@ -291,8 +330,13 @@ body::before {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 30%, rgba(123, 104, 238, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(255, 105, 180, 0.03) 0%, transparent 50%);
+    radial-gradient(1px 1px at 15% 10%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 35% 25%, rgba(210, 220, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 55% 15%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(2px 2px at 72% 30%, rgba(190, 210, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 88% 12%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(circle at 25% 40%, rgba(80, 60, 160, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 75% 55%, rgba(60, 40, 140, 0.03) 0%, transparent 50%);
   z-index: -1;
   pointer-events: none;
 }
