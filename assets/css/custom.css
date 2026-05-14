@@ -1903,3 +1903,79 @@ figcaption {
   flex-wrap: wrap;
   gap: var(--space-3);
 }
+
+/* ===== 强制黑金覆盖 - 防止minima主题残留 ===== */
+:root {
+  --brand-color: #c9a84c !important;
+  --brand-color-light: #e0c068 !important;
+  --brand-color-dark: #8b6914 !important;
+}
+
+a, a:link, a:visited {
+  color: #c9a84c !important;
+}
+
+a:hover, a:active {
+  color: #e0c068 !important;
+}
+
+::selection {
+  background: rgba(201, 168, 76, 0.4) !important;
+  color: #fff !important;
+}
+
+::-moz-selection {
+  background: rgba(201, 168, 76, 0.4) !important;
+  color: #fff !important;
+}
+
+.site-title, .site-title:visited {
+  color: #f0f6fc !important;
+}
+
+.post-link, .post-link:visited {
+  color: #c9a84c !important;
+}
+
+.site-nav .page-link, .site-nav .page-link:visited {
+  color: #c9a84c !important;
+}
+
+.site-footer-credits, .rss-subscribe {
+  color: #a8b3cf !important;
+}
+
+.highlight {
+  background: rgba(10, 10, 10, 0.95) !important;
+  border-color: rgba(201, 168, 76, 0.3) !important;
+}
+
+pre, code {
+  background: rgba(10, 10, 10, 0.95) !important;
+}
+
+:not(pre) > code {
+  background: rgba(201, 168, 76, 0.2) !important;
+  color: #f5e6a3 !important;
+  border-color: rgba(201, 168, 76, 0.3) !important;
+}
+
+blockquote {
+  border-left-color: #c9a84c !important;
+  color: #e0c068 !important;
+}
+
+hr {
+  border-color: rgba(201, 168, 76, 0.3) !important;
+}
+
+input, textarea {
+  border-color: rgba(201, 168, 76, 0.3) !important;
+  color: #f0f6fc !important;
+  background: rgba(10, 10, 10, 0.9) !important;
+}
+
+input:focus, textarea:focus {
+  border-color: #c9a84c !important;
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.3) !important;
+}
