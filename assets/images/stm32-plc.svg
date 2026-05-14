@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
   <defs>
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7b68ee" />
-      <stop offset="50%" stop-color="#9370db" />
-      <stop offset="100%" stop-color="#ff69b4" />
+      <stop offset="0%" stop-color="#c9a84c" />
+      <stop offset="50%" stop-color="#a6822e" />
+      <stop offset="100%" stop-color="#8b6914" />
     </linearGradient>
     <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#ffffff" />
@@ -19,8 +19,8 @@
     <rect x="0" y="0" width="300" height="200" rx="10" fill="rgba(30, 33, 48, 0.8)" stroke="white" stroke-width="4" />
     
     <!-- 芯片 -->
-    <rect x="50" y="50" width="80" height="80" rx="5" fill="#2a2d3e" stroke="#7b68ee" stroke-width="3" />
-    <text x="90" y="95" text-anchor="middle" fill="#7b68ee" font-family="Consolas, monospace" font-size="12" font-weight="bold">STM32</text>
+    <rect x="50" y="50" width="80" height="80" rx="5" fill="#2a2d3e" stroke="#c9a84c" stroke-width="3" />
+    <text x="90" y="95" text-anchor="middle" fill="#c9a84c" font-family="Consolas, monospace" font-size="12" font-weight="bold">STM32</text>
     
     <!-- 引脚 -->
     <g fill="white">
@@ -51,7 +51,7 @@
     </circle>
     
     <!-- 连接线 -->
-    <path d="M150,150 L250,150 L250,180 L150,180 Z" stroke="#ff69b4" stroke-width="3" fill="none" />
+    <path d="M150,150 L250,150 L250,180 L150,180 Z" stroke="#8b6914" stroke-width="3" fill="none" />
   </g>
   
   <!-- PLC 控制器 -->
@@ -59,18 +59,18 @@
     <rect x="0" y="0" width="300" height="200" rx="10" fill="rgba(30, 33, 48, 0.8)" stroke="white" stroke-width="4" />
     
     <!-- 显示屏 -->
-    <rect x="30" y="30" width="240" height="80" rx="5" fill="#1a1c2b" stroke="#ff69b4" stroke-width="2" />
-    <text x="150" y="75" text-anchor="middle" fill="#ff69b4" font-family="Consolas, monospace" font-size="16">PLC RUN</text>
+    <rect x="30" y="30" width="240" height="80" rx="5" fill="#1a1c2b" stroke="#8b6914" stroke-width="2" />
+    <text x="150" y="75" text-anchor="middle" fill="#8b6914" font-family="Consolas, monospace" font-size="16">PLC RUN</text>
     
     <!-- 按钮 -->
     <g>
-      <circle cx="80" cy="150" r="15" fill="#2a2d3e" stroke="#7b68ee" stroke-width="3" />
-      <circle cx="150" cy="150" r="15" fill="#2a2d3e" stroke="#7b68ee" stroke-width="3" />
-      <circle cx="220" cy="150" r="15" fill="#2a2d3e" stroke="#ff69b4" stroke-width="3" />
+      <circle cx="80" cy="150" r="15" fill="#2a2d3e" stroke="#c9a84c" stroke-width="3" />
+      <circle cx="150" cy="150" r="15" fill="#2a2d3e" stroke="#c9a84c" stroke-width="3" />
+      <circle cx="220" cy="150" r="15" fill="#2a2d3e" stroke="#8b6914" stroke-width="3" />
       
-      <text x="80" y="155" text-anchor="middle" fill="#7b68ee" font-family="Consolas, monospace" font-size="12">RUN</text>
-      <text x="150" y="155" text-anchor="middle" fill="#7b68ee" font-family="Consolas, monospace" font-size="12">STOP</text>
-      <text x="220" y="155" text-anchor="middle" fill="#ff69b4" font-family="Consolas, monospace" font-size="12">RESET</text>
+      <text x="80" y="155" text-anchor="middle" fill="#c9a84c" font-family="Consolas, monospace" font-size="12">RUN</text>
+      <text x="150" y="155" text-anchor="middle" fill="#c9a84c" font-family="Consolas, monospace" font-size="12">STOP</text>
+      <text x="220" y="155" text-anchor="middle" fill="#8b6914" font-family="Consolas, monospace" font-size="12">RESET</text>
     </g>
     
     <!-- I/O 指示灯 -->
