@@ -56,9 +56,9 @@
     this.twinkleSpeed = rand(0.002, 0.02);
     this.twinklePhase = rand(0, Math.PI * 2);
     this.twinkleAmp = rand(0.2, 0.6);
-    this.hue = rand(200, 280);
-    this.saturation = rand(10, 60);
-    this.lightness = rand(60, 95);
+    this.hue = rand(35, 55);
+    this.saturation = rand(30, 80);
+    this.lightness = rand(70, 98);
     this.driftX = 0;
     this.driftY = 0;
     this.driftTarget = rand(0.05, 0.3);
@@ -158,9 +158,9 @@
       var prev = this.trailPoints[i - 1];
       var ratio = i / this.trailPoints.length;
       ctx.strokeStyle = 'rgba(' +
-        Math.floor(200 + this.warmth * 55) + ', ' +
+        Math.floor(230 + this.warmth * 25) + ', ' +
         Math.floor(180 + this.warmth * 75) + ', ' +
-        Math.floor(240 + this.warmth * 15) + ', ' +
+        Math.floor(80 + this.warmth * 60) + ', ' +
         (p.alpha * ratio) + ')';
       ctx.lineWidth = ratio * 2.5;
       ctx.beginPath();
@@ -173,8 +173,8 @@
     if (head) {
       var headGlow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 8);
       headGlow.addColorStop(0, 'rgba(255, 255, 255, ' + (this.alpha * 0.9) + ')');
-      headGlow.addColorStop(0.4, 'rgba(200, 210, 255, ' + (this.alpha * 0.5) + ')');
-      headGlow.addColorStop(1, 'rgba(180, 190, 255, 0)');
+      headGlow.addColorStop(0.4, 'rgba(255, 220, 150, ' + (this.alpha * 0.5) + ')');
+      headGlow.addColorStop(1, 'rgba(200, 160, 80, 0)');
       ctx.fillStyle = headGlow;
       ctx.beginPath();
       ctx.arc(head.x, head.y, 8, 0, Math.PI * 2);
@@ -206,8 +206,8 @@
     var nx = canvas.width * 0.25 + Math.sin(time * 0.0003) * 100;
     var ny = canvas.height * 0.3 + Math.cos(time * 0.0004) * 80;
     var nebula1 = ctx.createRadialGradient(nx, ny, 0, nx, ny, canvas.width * 0.5);
-    nebula1.addColorStop(0, 'rgba(80, 60, 140, 0.03)');
-    nebula1.addColorStop(0.5, 'rgba(30, 20, 80, 0.015)');
+    nebula1.addColorStop(0, 'rgba(120, 80, 20, 0.03)');
+    nebula1.addColorStop(0.5, 'rgba(60, 35, 10, 0.015)');
     nebula1.addColorStop(1, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = nebula1;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -215,8 +215,8 @@
     var nx2 = canvas.width * 0.75 + Math.cos(time * 0.00035) * 120;
     var ny2 = canvas.height * 0.65 + Math.sin(time * 0.00045) * 90;
     var nebula2 = ctx.createRadialGradient(nx2, ny2, 0, nx2, ny2, canvas.width * 0.4);
-    nebula2.addColorStop(0, 'rgba(100, 40, 120, 0.025)');
-    nebula2.addColorStop(0.5, 'rgba(40, 15, 70, 0.012)');
+    nebula2.addColorStop(0, 'rgba(140, 90, 25, 0.025)');
+    nebula2.addColorStop(0.5, 'rgba(60, 30, 10, 0.012)');
     nebula2.addColorStop(1, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = nebula2;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
