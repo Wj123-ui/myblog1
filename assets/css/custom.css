@@ -155,7 +155,7 @@ body::before {
   pointer-events: none;
 }
 
-/* 粒子背景 */
+/* 粒子星空背景 */
 #particles-canvas {
   position: fixed;
   top: 0;
@@ -164,6 +164,8 @@ body::before {
   height: 100%;
   pointer-events: none;
   z-index: -2;
+  opacity: 1;
+  will-change: transform;
 }
 
 /* 鼠标跟随光效 */
