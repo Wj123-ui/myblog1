@@ -1,238 +1,320 @@
 /**
- * 动态星空粒子效果 - 完全重写版
+ * 动态星云星空效果
  * 特性：
- * - 500+ 星星，多层次深度
- * - 流星效果
- * - 鼠标交互（吸引/排斥）
- * - 星座连线
- * - 星云动态背景
- * - 性能优化
+ * - 多层流动星云
+ * - 极光效果
+ * - 穿梭粒子
+ * - 流星
+ * - 深邃宇宙感
  */
 (function() {
   'use strict';
   
   var canvas = document.getElementById('particles-canvas');
   if (!canvas) return;
-
   var ctx = canvas.getContext('2d');
-  var animationId;
-  var time = 0;
-  var mouseX = -1000;
-  var mouseY = -1000;
-  var mouseActive = false;
   
-  // 配置参数
-  var config = {
-    starCount: 500,
-    maxStarSize: 3,
-    twinkleSpeed: 0.003,
-    mouseRadius: 200,
-    mouseForce: 0.5,
-    connectionDistance: 100,
-    connectionOpacity: 0.15,
-    shootingStarChance: 0.005,
-    maxShootingStars: 3
-  };
+  var W, H, time = 0, animId;
+  var mouse = { x: -999, y: -999, active: false };
   
-  // 星星数组
-  var stars = [];
-  var shootingStars = [];
-  var nebulae = [];
-  
-  // 性能优化：减少动画偏好
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReduced) {
-    canvas.style.display = 'none';
-    return;
-  }
+  if (prefersReduced) { canvas.style.display = 'none'; return; }
   
-  // 工具函数
-  function rand(min, max) {
-    return Math.random() * (max - min) + min;
-  }
+  // 配置
+  var CFG = {
+    starCount: 400,
+    nebulaLayers: 5,
+    auroraEnabled: true,
+    particleCount: 60,
+    shootingChance: 0.003,
+    maxShooting: 2
+  };
   
-  function dist(x1, y1, x2, y2) {
-    var dx = x1 - x2;
-    var dy = y1 - y2;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
+  var stars = [], particles = [], shootStars = [], nebulae = [], aurorae = [];
   
-  function lerp(a, b, t) {
-    return a + (b - a) * t;
-  }
+  function rand(a, b) { return Math.random() * (b - a) + a; }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
   
-  // 调整画布大小
   function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
   }
   
-  // 星星类
-  function Star(x, y, layer) {
-    this.x = x || rand(0, canvas.width);
-    this.y = y || rand(0, canvas.height);
-    this.layer = layer || 0; // 0: 远景, 1: 中景, 2: 近景
-    this.reset();
-  }
-  
-  Star.prototype.reset = function() {
-    var layerConfig = [
-      { size: rand(0.3, 1.2), alpha: rand(0.2, 0.6), speed: 0.3 },  // 远景
-      { size: rand(0.8, 2.0), alpha: rand(0.4, 0.8), speed: 0.6 },  // 中景
-      { size: rand(1.5, 3.0), alpha: rand(0.6, 1.0), speed: 1.0 }   // 近景
+  // ===== 星云 =====
+  function Nebula() {
+    this.x = rand(W * 0.1, W * 0.9);
+    this.y = rand(H * 0.1, H * 0.9);
+    this.rx = rand(200, 500);
+    this.ry = rand(150, 400);
+    this.rotation = rand(0, Math.PI * 2);
+    this.rotSpeed = rand(-0.0002, 0.0002);
+    this.driftX = rand(-0.15, 0.15);
+    this.driftY = rand(-0.1, 0.1);
+    this.phase = rand(0, 100);
+    this.breathe = rand(0.001, 0.003);
+    
+    // 星云色彩 - 蓝紫、粉红、青绿、金色
+    var palettes = [
+      { h: 220, s: 60, l: 25 },  // 深蓝
+      { h: 270, s: 50, l: 20 },  // 紫
+      { h: 330, s: 55, l: 22 },  // 粉红
+      { h: 170, s: 50, l: 18 },  // 青
+      { h: 40, s: 65, l: 20 },   // 金
+      { h: 200, s: 70, l: 15 },  // 深青
+      { h: 290, s: 45, l: 18 },  // 暗紫
     ];
+    var pal = palettes[Math.floor(rand(0, palettes.length))];
+    this.hue = pal.h;
+    this.sat = pal.s;
+    this.lit = pal.l;
+    this.alpha = rand(0.04, 0.12);
+  }
+  
+  Nebula.prototype.update = function() {
+    this.x += this.driftX;
+    this.y += this.driftY;
+    this.rotation += this.rotSpeed;
     
-    var cfg = layerConfig[this.layer];
-    this.size = cfg.size;
-    this.baseAlpha = cfg.alpha;
-    this.alpha = this.baseAlpha;
-    this.speed = cfg.speed;
-    this.twinklePhase = rand(0, Math.PI * 2);
-    this.twinkleAmp = rand(0.1, 0.4);
-    this.hue = rand(35, 55);
-    this.saturation = rand(30, 80);
-    this.lightness = rand(75, 100);
-    this.driftX = rand(-0.1, 0.1);
-    this.driftY = rand(-0.05, 0.05);
-    this.pulse = rand(0.8, 1.2);
-    this.pulseSpeed = rand(0.01, 0.03);
+    if (this.x < -this.rx) this.x = W + this.rx;
+    if (this.x > W + this.rx) this.x = -this.rx;
+    if (this.y < -this.ry) this.y = H + this.ry;
+    if (this.y > H + this.ry) this.y = -this.ry;
   };
   
-  Star.prototype.update = function(mouseX, mouseY) {
-    // 闪烁效果
-    this.alpha = this.baseAlpha + Math.sin(time * config.twinkleSpeed * this.speed + this.twinklePhase) * this.twinkleAmp;
-    this.alpha = Math.max(0.05, Math.min(1, this.alpha));
+  Nebula.prototype.draw = function() {
+    var breathe = 1 + Math.sin(time * this.breathe + this.phase) * 0.2;
+    var rx = this.rx * breathe;
+    var ry = this.ry * breathe;
     
-    // 脉冲效果
-    this.pulse = 1 + Math.sin(time * this.pulseSpeed) * 0.15;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
     
-    // 漂移
-    this.x += this.driftX * this.speed;
-    this.y += this.driftY * this.speed;
+    var grad = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(rx, ry));
+    var a = this.alpha * (0.8 + Math.sin(time * 0.001 + this.phase) * 0.2);
+    grad.addColorStop(0, 'hsla(' + this.hue + ',' + this.sat + '%,' + (this.lit + 10) + '%,' + a + ')');
+    grad.addColorStop(0.3, 'hsla(' + (this.hue + 15) + ',' + (this.sat - 10) + '%,' + this.lit + '%,' + (a * 0.7) + ')');
+    grad.addColorStop(0.6, 'hsla(' + (this.hue + 30) + ',' + (this.sat - 20) + '%,' + (this.lit - 5) + '%,' + (a * 0.3) + ')');
+    grad.addColorStop(1, 'hsla(' + this.hue + ',' + this.sat + '%,' + this.lit + '%,0)');
     
-    // 鼠标交互
-    if (mouseActive) {
-      var d = dist(this.x, this.y, mouseX, mouseY);
-      if (d < config.mouseRadius) {
-        var force = (1 - d / config.mouseRadius) * config.mouseForce;
-        var angle = Math.atan2(this.y - mouseY, this.x - mouseX);
-        this.x += Math.cos(angle) * force * 2;
-        this.y += Math.sin(angle) * force * 2;
-      }
-    }
-    
-    // 边界检查
-    if (this.x < -10) this.x = canvas.width + 10;
-    if (this.x > canvas.width + 10) this.x = -10;
-    if (this.y < -10) this.y = canvas.height + 10;
-    if (this.y > canvas.height + 10) this.y = -10;
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   };
   
-  Star.prototype.draw = function() {
-    if (this.alpha < 0.02) return;
-    
+  // ===== 极光 =====
+  function Aurora() {
+    this.y = rand(H * 0.05, H * 0.35);
+    this.hue = rand(120, 300);
+    this.speed = rand(0.3, 0.8);
+    this.amplitude = rand(30, 80);
+    this.freq = rand(0.002, 0.005);
+    this.phase = rand(0, 100);
+    this.alpha = rand(0.02, 0.06);
+    this.width = rand(60, 150);
+  }
+  
+  Aurora.prototype.draw = function() {
     ctx.save();
     ctx.globalAlpha = this.alpha;
     
-    // 大星星添加光晕
-    if (this.size > 1.8) {
-      var glowSize = this.size * 6 * this.pulse;
-      var glow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowSize);
-      glow.addColorStop(0, 'hsla(' + this.hue + ', ' + this.saturation + '%, ' + this.lightness + '%, 0.8)');
-      glow.addColorStop(0.2, 'hsla(' + this.hue + ', ' + this.saturation + '%, ' + this.lightness + '%, 0.4)');
-      glow.addColorStop(0.5, 'hsla(' + this.hue + ', ' + this.saturation + '%, ' + this.lightness + '%, 0.1)');
-      glow.addColorStop(1, 'hsla(' + this.hue + ', ' + this.saturation + '%, ' + this.lightness + '%, 0)');
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, glowSize, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // 十字星光效果
-      if (this.alpha > 0.6 && Math.sin(time * 0.005 + this.twinklePhase) > 0.5) {
-        this.drawCrossGlow();
+    var hueShift = Math.sin(time * 0.0003) * 30;
+    var h = this.hue + hueShift;
+    
+    ctx.beginPath();
+    ctx.moveTo(0, this.y);
+    
+    for (var x = 0; x <= W; x += 4) {
+      var y = this.y + Math.sin(x * this.freq + time * 0.001 + this.phase) * this.amplitude;
+      y += Math.sin(x * this.freq * 2.3 + time * 0.0015) * this.amplitude * 0.4;
+      ctx.lineTo(x, y);
+    }
+    
+    for (var x2 = W; x2 >= 0; x2 -= 4) {
+      var y2 = this.y + this.width + Math.sin(x2 * this.freq + time * 0.001 + this.phase + 1) * this.amplitude * 0.6;
+      ctx.lineTo(x2, y2);
+    }
+    
+    ctx.closePath();
+    
+    var grad = ctx.createLinearGradient(0, this.y - this.amplitude, 0, this.y + this.width + this.amplitude);
+    grad.addColorStop(0, 'hsla(' + h + ',80%,60%,0.3)');
+    grad.addColorStop(0.3, 'hsla(' + (h + 20) + ',70%,50%,0.5)');
+    grad.addColorStop(0.5, 'hsla(' + (h + 40) + ',60%,45%,0.6)');
+    grad.addColorStop(0.7, 'hsla(' + (h + 20) + ',70%,50%,0.4)');
+    grad.addColorStop(1, 'hsla(' + h + ',80%,60%,0.1)');
+    
+    ctx.fillStyle = grad;
+    ctx.filter = 'blur(15px)';
+    ctx.fill();
+    ctx.filter = 'none';
+    
+    ctx.restore();
+  };
+  
+  // ===== 星星 =====
+  function Star() {
+    this.reset(true);
+  }
+  
+  Star.prototype.reset = function(init) {
+    this.x = init ? rand(0, W) : rand(-W * 0.1, W * 1.1);
+    this.y = init ? rand(0, H) : rand(-H * 0.1, H * 1.1);
+    this.size = rand(0.3, 2.8);
+    this.baseA = rand(0.3, 1);
+    this.twinkleSpd = rand(0.002, 0.01);
+    this.twinklePh = rand(0, 6.28);
+    this.hue = rand(35, 55);
+    this.sat = rand(30, 90);
+    this.lit = rand(75, 100);
+    this.vx = rand(-0.02, 0.02);
+    this.vy = rand(-0.01, 0.01);
+  };
+  
+  Star.prototype.update = function() {
+    this.x += this.vx;
+    this.y += this.vy;
+    
+    if (mouse.active) {
+      var dx = this.x - mouse.x, dy = this.y - mouse.y;
+      var d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 180) {
+        var f = (1 - d / 180) * 0.3;
+        this.x += dx / d * f;
+        this.y += dy / d * f;
       }
     }
     
-    // 核心亮点
-    var coreSize = this.size * this.pulse;
-    var coreGradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, coreSize);
-    coreGradient.addColorStop(0, 'rgba(255, 255, 255, ' + this.alpha + ')');
-    coreGradient.addColorStop(0.5, 'hsla(' + this.hue + ', ' + this.saturation + '%, ' + this.lightness + '%, ' + (this.alpha * 0.8) + ')');
-    coreGradient.addColorStop(1, 'hsla(' + this.hue + ', ' + this.saturation + '%, ' + this.lightness + '%, 0)');
-    ctx.fillStyle = coreGradient;
+    if (this.x < -20 || this.x > W + 20 || this.y < -20 || this.y > H + 20) {
+      this.reset(false);
+    }
+  };
+  
+  Star.prototype.draw = function() {
+    var a = this.baseA + Math.sin(time * this.twinkleSpd + this.twinklePh) * 0.3;
+    a = clamp(a, 0.05, 1);
+    
+    ctx.save();
+    ctx.globalAlpha = a;
+    
+    if (this.size > 1.8) {
+      var gs = this.size * 5;
+      var g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, gs);
+      g.addColorStop(0, 'hsla(' + this.hue + ',' + this.sat + '%,' + this.lit + '%,0.7)');
+      g.addColorStop(0.3, 'hsla(' + this.hue + ',' + this.sat + '%,' + this.lit + '%,0.2)');
+      g.addColorStop(1, 'hsla(' + this.hue + ',' + this.sat + '%,' + this.lit + '%,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, gs, 0, 6.28);
+      ctx.fill();
+    }
+    
+    ctx.fillStyle = 'hsla(' + this.hue + ',' + this.sat + '%,' + this.lit + '%,' + a + ')';
     ctx.beginPath();
-    ctx.arc(this.x, this.y, coreSize, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, this.size, 0, 6.28);
+    ctx.fill();
+    ctx.restore();
+  };
+  
+  // ===== 穿梭粒子 =====
+  function Particle() {
+    this.reset();
+  }
+  
+  Particle.prototype.reset = function() {
+    this.x = rand(0, W);
+    this.y = rand(0, H);
+    this.vx = rand(-0.8, 0.8);
+    this.vy = rand(-0.5, 0.5);
+    this.size = rand(1, 3);
+    this.life = rand(200, 500);
+    this.maxLife = this.life;
+    this.hue = rand(180, 320);
+    this.trail = [];
+    this.maxTrail = Math.floor(rand(5, 15));
+  };
+  
+  Particle.prototype.update = function() {
+    this.trail.push({ x: this.x, y: this.y });
+    if (this.trail.length > this.maxTrail) this.trail.shift();
+    
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life--;
+    
+    if (this.life <= 0 || this.x < -50 || this.x > W + 50 || this.y < -50 || this.y > H + 50) {
+      this.reset();
+    }
+  };
+  
+  Particle.prototype.draw = function() {
+    var lifeRatio = this.life / this.maxLife;
+    var a = lifeRatio * 0.6;
+    
+    ctx.save();
+    
+    for (var i = 0; i < this.trail.length; i++) {
+      var t = this.trail[i];
+      var ta = (i / this.trail.length) * a * 0.5;
+      ctx.fillStyle = 'hsla(' + this.hue + ',70%,70%,' + ta + ')';
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, this.size * 0.5, 0, 6.28);
+      ctx.fill();
+    }
+    
+    ctx.fillStyle = 'hsla(' + this.hue + ',60%,80%,' + a + ')';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, 6.28);
     ctx.fill();
     
     ctx.restore();
   };
   
-  Star.prototype.drawCrossGlow = function() {
-    var len = this.size * 8;
-    var opacity = this.alpha * 0.3;
-    
-    ctx.strokeStyle = 'rgba(255, 255, 255, ' + opacity + ')';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    ctx.moveTo(this.x - len, this.y);
-    ctx.lineTo(this.x + len, this.y);
-    ctx.moveTo(this.x, this.y - len);
-    ctx.lineTo(this.x, this.y + len);
-    ctx.stroke();
-  };
-  
-  // 流星类
+  // ===== 流星 =====
   function ShootingStar() {
     this.reset();
   }
   
   ShootingStar.prototype.reset = function() {
-    this.x = rand(-100, canvas.width * 0.6);
-    this.y = rand(-50, canvas.height * 0.4);
-    this.length = rand(80, 200);
-    this.speed = rand(8, 16);
-    this.angle = rand(Math.PI * 0.15, Math.PI * 0.4);
-    this.vx = Math.cos(this.angle) * this.speed;
-    this.vy = Math.sin(this.angle) * this.speed;
-    this.alpha = 1;
-    this.decay = rand(0.008, 0.02);
+    this.x = rand(-50, W * 0.5);
+    this.y = rand(-30, H * 0.3);
+    this.len = rand(100, 250);
+    this.spd = rand(10, 20);
+    this.ang = rand(0.3, 0.7);
+    this.vx = Math.cos(this.ang) * this.spd;
+    this.vy = Math.sin(this.ang) * this.spd;
+    this.a = 1;
+    this.decay = rand(0.006, 0.015);
     this.trail = [];
-    this.maxTrail = 40;
+    this.maxTrail = 50;
     this.warmth = rand(0, 1);
-    this.thickness = rand(1.5, 3);
   };
   
   ShootingStar.prototype.update = function() {
-    this.trail.push({ x: this.x, y: this.y, alpha: this.alpha });
+    this.trail.push({ x: this.x, y: this.y, a: this.a });
     if (this.trail.length > this.maxTrail) this.trail.shift();
-    
     this.x += this.vx;
     this.y += this.vy;
-    this.alpha -= this.decay;
-    
-    for (var i = 0; i < this.trail.length; i++) {
-      this.trail[i].alpha -= this.decay * 1.2;
-    }
-    this.trail = this.trail.filter(function(p) { return p.alpha > 0; });
+    this.a -= this.decay;
+    for (var i = 0; i < this.trail.length; i++) this.trail[i].a -= this.decay * 1.3;
+    this.trail = this.trail.filter(function(p) { return p.a > 0; });
   };
   
   ShootingStar.prototype.draw = function() {
     if (this.trail.length < 2) return;
-    
     ctx.save();
     
-    // 绘制流星尾迹
     for (var i = 1; i < this.trail.length; i++) {
-      var p = this.trail[i];
-      var prev = this.trail[i - 1];
-      var ratio = i / this.trail.length;
-      
-      var r = Math.floor(230 + this.warmth * 25);
-      var g = Math.floor(180 + this.warmth * 75);
-      var b = Math.floor(80 + this.warmth * 60);
-      
-      ctx.strokeStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + (p.alpha * ratio * 0.8) + ')';
-      ctx.lineWidth = ratio * this.thickness;
+      var p = this.trail[i], prev = this.trail[i - 1];
+      var r = i / this.trail.length;
+      var red = 230 + this.warmth * 25;
+      var grn = 180 + this.warmth * 75;
+      var blu = 80 + this.warmth * 60;
+      ctx.strokeStyle = 'rgba(' + ~~red + ',' + ~~grn + ',' + ~~blu + ',' + (p.a * r * 0.8) + ')';
+      ctx.lineWidth = r * 2.5;
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(prev.x, prev.y);
@@ -240,171 +322,105 @@
       ctx.stroke();
     }
     
-    // 绘制流星头部光晕
-    var head = this.trail[this.trail.length - 1];
-    if (head) {
-      var headGlow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 12);
-      headGlow.addColorStop(0, 'rgba(255, 255, 255, ' + (this.alpha * 0.9) + ')');
-      headGlow.addColorStop(0.3, 'rgba(255, 230, 180, ' + (this.alpha * 0.6) + ')');
-      headGlow.addColorStop(0.6, 'rgba(255, 200, 120, ' + (this.alpha * 0.3) + ')');
-      headGlow.addColorStop(1, 'rgba(200, 160, 80, 0)');
-      ctx.fillStyle = headGlow;
+    var hd = this.trail[this.trail.length - 1];
+    if (hd) {
+      var hg = ctx.createRadialGradient(hd.x, hd.y, 0, hd.x, hd.y, 15);
+      hg.addColorStop(0, 'rgba(255,255,255,' + (this.a * 0.9) + ')');
+      hg.addColorStop(0.3, 'rgba(255,230,180,' + (this.a * 0.5) + ')');
+      hg.addColorStop(1, 'rgba(200,160,80,0)');
+      ctx.fillStyle = hg;
       ctx.beginPath();
-      ctx.arc(head.x, head.y, 12, 0, Math.PI * 2);
+      ctx.arc(hd.x, hd.y, 15, 0, 6.28);
       ctx.fill();
     }
-    
     ctx.restore();
   };
   
-  ShootingStar.prototype.isDead = function() {
-    return this.alpha <= 0 || this.x > canvas.width + 100 || this.y > canvas.height + 100;
-  };
+  ShootingStar.prototype.dead = function() { return this.a <= 0; };
   
-  // 星云类
-  function Nebula() {
-    this.x = rand(0, canvas.width);
-    this.y = rand(0, canvas.height);
-    this.radius = rand(200, 400);
-    this.hue = rand(30, 50);
-    this.alpha = rand(0.01, 0.03);
-    this.driftSpeed = rand(0.0002, 0.0005);
-    this.phase = rand(0, Math.PI * 2);
+  // ===== 绘制深空背景 =====
+  function drawDeepSpace() {
+    var g1 = ctx.createRadialGradient(W * 0.2, H * 0.3, 0, W * 0.2, H * 0.3, W * 0.6);
+    g1.addColorStop(0, 'rgba(10,5,25,0.3)');
+    g1.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, W, H);
+    
+    var g2 = ctx.createRadialGradient(W * 0.8, H * 0.7, 0, W * 0.8, H * 0.7, W * 0.5);
+    g2.addColorStop(0, 'rgba(15,10,30,0.25)');
+    g2.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g2;
+    ctx.fillRect(0, 0, W, H);
   }
   
-  Nebula.prototype.draw = function() {
-    var nx = this.x + Math.sin(time * this.driftSpeed + this.phase) * 50;
-    var ny = this.y + Math.cos(time * this.driftSpeed * 0.7 + this.phase) * 40;
-    
-    var gradient = ctx.createRadialGradient(nx, ny, 0, nx, ny, this.radius);
-    gradient.addColorStop(0, 'hsla(' + this.hue + ', 60%, 30%, ' + this.alpha + ')');
-    gradient.addColorStop(0.5, 'hsla(' + this.hue + ', 50%, 20%, ' + (this.alpha * 0.5) + ')');
-    gradient.addColorStop(1, 'hsla(' + this.hue + ', 40%, 10%, 0)');
-    
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  };
+  // ===== 鼠标光效 =====
+  function drawMouseGlow() {
+    if (!mouse.active) return;
+    var g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 200);
+    g.addColorStop(0, 'rgba(120,80,200,0.04)');
+    g.addColorStop(0.5, 'rgba(80,50,150,0.02)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  }
   
-  // 初始化
+  // ===== 初始化 =====
   function init() {
     resize();
+    stars = []; particles = []; shootStars = []; nebulae = []; aurorae = [];
     
-    // 创建星星 - 三层深度
-    stars = [];
-    for (var i = 0; i < config.starCount; i++) {
-      var layer = i < config.starCount * 0.5 ? 0 : (i < config.starCount * 0.8 ? 1 : 2);
-      stars.push(new Star(null, null, layer));
-    }
-    
-    // 创建星云
-    nebulae = [];
-    for (var j = 0; j < 3; j++) {
-      nebulae.push(new Nebula());
+    for (var i = 0; i < CFG.starCount; i++) stars.push(new Star());
+    for (var j = 0; j < CFG.particleCount; j++) particles.push(new Particle());
+    for (var k = 0; k < CFG.nebulaLayers; k++) nebulae.push(new Nebula());
+    if (CFG.auroraEnabled) {
+      for (var l = 0; l < 3; l++) aurorae.push(new Aurora());
     }
   }
   
-  // 绘制星座连线
-  function drawConnections() {
-    ctx.save();
-    ctx.strokeStyle = 'rgba(201, 168, 76, ' + config.connectionOpacity + ')';
-    ctx.lineWidth = 0.5;
+  // ===== 主循环 =====
+  function loop(ts) {
+    time = ts || 0;
+    ctx.clearRect(0, 0, W, H);
     
-    for (var i = 0; i < stars.length; i++) {
-      var s1 = stars[i];
-      if (s1.layer < 2) continue; // 只连接近景星星
-      
-      for (var j = i + 1; j < stars.length; j++) {
-        var s2 = stars[j];
-        if (s2.layer < 2) continue;
-        
-        var d = dist(s1.x, s1.y, s2.x, s2.y);
-        if (d < config.connectionDistance) {
-          var opacity = (1 - d / config.connectionDistance) * 0.3 * Math.min(s1.alpha, s2.alpha);
-          ctx.globalAlpha = opacity;
-          ctx.beginPath();
-          ctx.moveTo(s1.x, s1.y);
-          ctx.lineTo(s2.x, s2.y);
-          ctx.stroke();
-        }
-      }
-    }
-    ctx.restore();
-  }
-  
-  // 绘制鼠标光效
-  function drawMouseEffect() {
-    if (!mouseActive) return;
+    drawDeepSpace();
     
-    ctx.save();
-    var gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, config.mouseRadius);
-    gradient.addColorStop(0, 'rgba(201, 168, 76, 0.05)');
-    gradient.addColorStop(0.5, 'rgba(201, 168, 76, 0.02)');
-    gradient.addColorStop(1, 'rgba(201, 168, 76, 0)');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.restore();
-  }
-  
-  // 主动画循环
-  function animate(timestamp) {
-    time = timestamp || 0;
+    for (var a = 0; a < aurorae.length; a++) aurorae[a].draw();
     
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // 绘制星云背景
     for (var n = 0; n < nebulae.length; n++) {
+      nebulae[n].update();
       nebulae[n].draw();
     }
     
-    // 绘制星星
-    for (var i = 0; i < stars.length; i++) {
-      stars[i].update(mouseX, mouseY);
-      stars[i].draw();
+    drawMouseGlow();
+    
+    for (var s = 0; s < stars.length; s++) {
+      stars[s].update();
+      stars[s].draw();
     }
     
-    // 绘制星座连线
-    drawConnections();
-    
-    // 绘制鼠标效果
-    drawMouseEffect();
-    
-    // 更新和绘制流星
-    if (Math.random() < config.shootingStarChance && shootingStars.length < config.maxShootingStars) {
-      shootingStars.push(new ShootingStar());
+    for (var p = 0; p < particles.length; p++) {
+      particles[p].update();
+      particles[p].draw();
     }
     
-    for (var j = shootingStars.length - 1; j >= 0; j--) {
-      shootingStars[j].update();
-      shootingStars[j].draw();
-      if (shootingStars[j].isDead()) {
-        shootingStars.splice(j, 1);
-      }
+    if (Math.random() < CFG.shootingChance && shootStars.length < CFG.maxShooting) {
+      shootStars.push(new ShootingStar());
+    }
+    for (var ss = shootStars.length - 1; ss >= 0; ss--) {
+      shootStars[ss].update();
+      shootStars[ss].draw();
+      if (shootStars[ss].dead()) shootStars.splice(ss, 1);
     }
     
-    animationId = requestAnimationFrame(animate);
+    animId = requestAnimationFrame(loop);
   }
   
-  // 事件监听
-  window.addEventListener('resize', function() {
-    resize();
-  });
+  // ===== 事件 =====
+  window.addEventListener('resize', resize);
+  document.addEventListener('mousemove', function(e) { mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true; });
+  document.addEventListener('mouseleave', function() { mouse.active = false; });
+  window.addEventListener('beforeunload', function() { if (animId) cancelAnimationFrame(animId); });
   
-  document.addEventListener('mousemove', function(e) {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    mouseActive = true;
-  });
-  
-  document.addEventListener('mouseleave', function() {
-    mouseActive = false;
-  });
-  
-  window.addEventListener('beforeunload', function() {
-    if (animationId) cancelAnimationFrame(animationId);
-  });
-  
-  // 启动
   init();
-  animate();
-  
+  loop();
 })();
