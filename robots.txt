@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wj123-ui.github.io/myblog1/sitemap.xml

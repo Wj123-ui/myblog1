@@ -76,7 +76,7 @@
 
 /* 全局深空星空背景 */
 html, body {
-  background: #000000;
+  background: transparent;
   color: #f0f6fc;
   min-height: 100vh;
   font-family: var(--font-primary);
@@ -87,20 +87,9 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
-  position: relative;
 }
 
-/* 确保页面内容在canvas之上 */
-.site-header,
-.page-content,
-.site-footer {
-  position: relative;
-  z-index: 1;
-}
-
-/* body::before 已移除，由canvas粒子效果替代 */
-
-/* 粒子星空背景 */
+/* 粒子星空背景 - 最底层 */
 #particles-canvas {
   position: fixed;
   top: 0;
@@ -108,9 +97,17 @@ html, body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
   opacity: 1;
-  will-change: transform;
+}
+
+/* 确保页面内容在canvas之上 */
+.site-header,
+.page-content,
+.site-footer,
+.glass-card {
+  position: relative;
+  z-index: 1;
 }
 
 /* 鼠标跟随光效 */
@@ -128,9 +125,9 @@ html, body {
 
 /* 玻璃拟态通用卡片 - 增强版 */
 .glass-card {
-  background: rgba(30, 33, 48, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   box-shadow: 
