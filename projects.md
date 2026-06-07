@@ -14,7 +14,7 @@ permalink: /projects/
   <div class="projects-grid">
 
     <div class="project-card glass-card">
-      <div class="project-icon" style="color: #7b68ee;" aria-hidden="true">🔌</div>
+      <div class="project-icon project-icon-purple" aria-hidden="true">🔌</div>
       <h3>智能 PLC 控制系统</h3>
       <p>
         基于西门子 S7‑1200 PLC 的自动化生产线控制系统，集成 HMI 触摸屏与远程监控功能。
@@ -27,7 +27,7 @@ permalink: /projects/
     </div>
 
     <div class="project-card glass-card">
-      <div class="project-icon" style="color: #ff69b4;" aria-hidden="true">🖥️</div>
+      <div class="project-icon project-icon-pink" aria-hidden="true">🖥️</div>
       <h3>ESP32 环境监测节点</h3>
       <p>
         使用 ESP32 采集温湿度、PM2.5 等数据，通过 Wi‑Fi 上传至云平台，实现远程环境监控。
@@ -40,7 +40,7 @@ permalink: /projects/
     </div>
 
     <div class="project-card glass-card">
-      <div class="project-icon" style="color: #9370db;" aria-hidden="true">⚡</div>
+      <div class="project-icon project-icon-lavender" aria-hidden="true">⚡</div>
       <h3>STM32 四轴飞行器控制器</h3>
       <p>
         基于 STM32F4 的四轴飞行器飞控板，实现姿态解算、PID 控制与无线通信功能。
@@ -54,11 +54,11 @@ permalink: /projects/
 
   </div>
 
-  <div style="text-align: center; margin-top: 60px;">
-    <p style="color: var(--color-text-secondary); line-height: 1.8; font-size: 1.1em; margin-bottom: 30px;">
+  <div class="page-cta-wrapper page-cta-wrapper--large">
+    <p class="page-cta-text">
       更多项目正在开发中，后续会陆续更新详细的设计文档与源码。
     </p>
-    <a href="{{ '/' | relative_url }}" class="social-btn" style="padding: 14px 40px;">
+    <a href="{{ '/' | relative_url }}" class="social-btn social-btn--medium">
       <span aria-hidden="true" style="margin-right: 8px;">🏠</span> 返回首页
     </a>
   </div>

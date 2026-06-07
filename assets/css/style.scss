@@ -1,86 +1,33 @@
 ---
 ---
 
-// ===== 黑金配色 - 强制覆写 minima 全部变量 =====
-// 必须在 @import "minima" 之前定义
+// ===== Minima 变量覆写 =====
+// 在 @import "minima" 之前定义 SCSS 变量以覆盖主题默认值
+// 实际视觉样式由 assets/css/custom.css 统一管理
 
 // 核心品牌色
-$brand-color: #c9a84c !default;
-$brand-color-light: #e0c068 !default;
-$brand-color-dark: #8b6914 !default;
+$brand-color: #c9a84c;
+$brand-color-light: #e0c068;
+$brand-color-dark: #8b6914;
 
 // 背景与文本
-$background-color: #000000 !default;
-$text-color: #f0f6fc !default;
-$text-color-light: #a8b3cf !default;
+$background-color: #000000;
+$text-color: #f0f6fc;
+$text-color-light: #a8b3cf;
 
 // 代码块
-$code-background-color: #0a0a0a !default;
+$code-background-color: #0a0a0a;
 
 // 表格
-$table-text-color: #a8b3cf !default;
-$table-zebra-color: rgba(201, 168, 76, 0.05) !default;
-$table-header-bg-color: rgba(201, 168, 76, 0.15) !default;
-$table-header-border: #c9a84c !default;
-$table-border-color: rgba(201, 168, 76, 0.3) !default;
+$table-text-color: #a8b3cf;
+$table-zebra-color: rgba(201, 168, 76, 0.05);
+$table-header-bg-color: rgba(201, 168, 76, 0.15);
+$table-header-border: #c9a84c;
+$table-border-color: rgba(201, 168, 76, 0.3);
 
 // 灰色系
-$grey-color: #666666 !default;
-$grey-color-light: #999999 !default;
-$grey-color-dark: #333333 !default;
+$grey-color: #666666;
+$grey-color-light: #999999;
+$grey-color-dark: #333333;
 
-// 导入 minima 主题 - 此时会使用我们定义的黑金变量
 @import "minima";
-
-// ===== 额外强制覆盖 =====
-// 覆盖 minima 可能残留的链接颜色
-a {
-  color: #c9a84c !important;
-  &:visited {
-    color: #a6822e !important;
-  }
-  &:hover {
-    color: #e0c068 !important;
-    text-decoration: none !important;
-  }
-}
-
-// 覆盖 site-title
-.site-title,
-.site-title:visited {
-  color: #f0f6fc !important;
-}
-
-// 覆盖 site-nav
-.site-nav .page-link {
-  color: #c9a84c !important;
-}
-
-// 覆盖 footer
-.site-footer {
-  border-top-color: rgba(201, 168, 76, 0.3) !important;
-}
-
-// 覆盖 post-meta
-.post-meta {
-  color: #a8b3cf !important;
-}
-
-// 覆盖 blockquote
-blockquote {
-  color: #e0c068 !important;
-  border-left-color: #c9a84c !important;
-}
-
-// 覆盖 code
-pre,
-code {
-  background-color: #0a0a0a !important;
-  border-color: rgba(201, 168, 76, 0.3) !important;
-}
-
-// 覆盖 selection
-::selection {
-  background: rgba(201, 168, 76, 0.4) !important;
-  color: #fff !important;
-}

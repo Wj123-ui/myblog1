@@ -25,13 +25,13 @@ permalink: /images-test/
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
     <div class="glass-card" style="padding: 20px; text-align: center;">
       <h4 style="color: #f0f6fc; margin-bottom: 15px;">🎭 DiceBear 头像</h4>
-      <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Electronics&backgroundColor=ffdfbf&hair=variant08&hairColor=2c1810&accessories=variant01&accessoriesColor=ffdfbf" alt="Avatar" style="width: 150px; height: 150px; border-radius: 50%; border: 4px solid rgba(123, 104, 238, 0.3);">
+      <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Electronics&backgroundColor=ffdfbf&hair=variant08&hairColor=2c1810&accessories=variant01&accessoriesColor=ffdfbf" alt="Avatar" loading="lazy" decoding="async" style="width: 150px; height: 150px; border-radius: 50%; border: 4px solid rgba(123, 104, 238, 0.3);">
       <p style="color: #8b949e; margin-top: 10px; font-size: 0.9em;">外部SVG (DiceBear API)</p>
     </div>
     
     <div class="glass-card" style="padding: 20px; text-align: center;">
       <h4 style="color: #f0f6fc; margin-bottom: 15px;">📝 Jekyll文章图</h4>
-      <img src="{{ site.baseurl }}/assets/images/jekyll-github.svg" alt="Jekyll GitHub" style="width: 100%; height: 150px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(123, 104, 238, 0.3);">
+      <img src="{{ site.baseurl }}/assets/images/jekyll-github.svg" alt="Jekyll GitHub" loading="lazy" decoding="async" style="width: 100%; height: 150px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(123, 104, 238, 0.3);">
       <p style="color: #8b949e; margin-top: 10px; font-size: 0.9em;">本地SVG</p>
     </div>
   </div>
