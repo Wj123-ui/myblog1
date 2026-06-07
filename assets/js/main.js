@@ -284,3 +284,99 @@
     }, 250);
   });
 })();
+
+// ===== UI 交互逻辑 =====
+(function() {
+  var backToTop = document.getElementById('back-to-top');
+  var progressBar = document.getElementById('reading-progress');
+  var cursorGlow = document.getElementById('cursor-glow');
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!backToTop || !progressBar || !cursorGlow) return;
+
+  // 滚动进度条 + 返回顶部按钮
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        var scrollY = window.pageYOffset;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+        if (scrollY > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+
+        if (docHeight > 0) {
+          progressBar.style.width = (scrollY / docHeight) * 100 + '%';
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
+  });
+
+  // 鼠标跟随光效
+  if (!prefersReduced) {
+    var mouseX = 0, mouseY = 0;
+    var glowX = 0, glowY = 0;
+
+    document.addEventListener('mousemove', function(e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    }, { passive: true });
+
+    function animateGlow() {
+      glowX += (mouseX - glowX) * 0.1;
+      glowY += (mouseY - glowY) * 0.1;
+      cursorGlow.style.left = glowX + 'px';
+      cursorGlow.style.top = glowY + 'px';
+      requestAnimationFrame(animateGlow);
+    }
+    animateGlow();
+  } else {
+    cursorGlow.style.display = 'none';
+  }
+
+  // 滚动渐入动画
+  var observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.feature-card, .post-item').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  // 锚点平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      var targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+
+      var targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        e.preventDefault();
+        var headerHeight = document.querySelector('.site-header')?.offsetHeight || 80;
+        var targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+
+        window.scrollTo({
+          top: targetPosition,
+          behavior: prefersReduced ? 'auto' : 'smooth'
+        });
+      }
+    });
+  });
+})();

@@ -35,8 +35,8 @@ permalink: /archive/
     {% endfor %}
   </div>
 
-  <div style="text-align: center; margin-top: 50px;">
-    <a href="{{ '/' | relative_url }}" class="social-btn" style="padding: 14px 40px;">
+  <div class="page-cta-wrapper">
+    <a href="{{ '/' | relative_url }}" class="social-btn social-btn--medium">
       <span aria-hidden="true" style="margin-right: 8px;">🏠</span> 返回首页
     </a>
   </div>
