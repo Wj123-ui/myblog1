@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "📖 TI MSPM0 DriverLib 速查手册：GPIO · Timer · PWM · UART · I2C · SPI · ADC · DAC"
-date: 2026-07-16 21:00:00 +0800
+date: 2026-07-15 21:00:00 +0800
 categories: ["MSPM0", "嵌入式开发", "教程"]
 tags: ["ti", "mspm0", "driverlib", "gpio", "timer", "pwm", "uart", "i2c", "spi", "adc", "dac", "嵌入式"]
 excerpt: "TI MSPM0 SDK DriverLib 常用外设函数速查，基于 SysConfig 配置流程，涵盖 GPIO、Timer、PWM、UART、I2C、SPI、ADC12、DAC12 及中断处理。"
