@@ -1234,8 +1234,9 @@ body.custom-cursor * {
 }
 
 .post-content pre,
-div.highlight,
-figure.highlight {
+.post-content .highlighter-rouge .highlight,
+.post-content div.highlight,
+.post-content figure.highlight {
   margin: 0 0 20px;
   padding: 18px 22px;
   background: #f6f4ef;
@@ -1245,8 +1246,9 @@ figure.highlight {
   color: #3c4043;
 }
 .post-content pre code,
-div.highlight code,
-figure.highlight code {
+.post-content .highlighter-rouge .highlight code,
+.post-content div.highlight code,
+.post-content figure.highlight code {
   padding: 0;
   background: transparent;
   border: none;
@@ -1256,41 +1258,41 @@ figure.highlight code {
 }
 
 /* 语法高亮（GitHub Light 配色，适配浅色代码块背景） */
-.highlight .c,
-.highlight .cm,
-.highlight .c1,
-.highlight .cs { color: #9a9a9a; font-style: italic; }
-.highlight .k,
-.highlight .kd,
-.highlight .kn,
-.highlight .kt { color: #a71d5d; font-weight: 600; }
-.highlight .s,
-.highlight .s1,
-.highlight .s2,
-.highlight .sb,
-.highlight .sd,
-.highlight .se,
-.highlight .sh,
-.highlight .si,
-.highlight .sx,
-.highlight .sr { color: #183691; }
-.highlight .nf,
-.highlight .na,
-.highlight .nb,
-.highlight .bp { color: #0086b3; }
-.highlight .m,
-.highlight .mi,
-.highlight .mf,
-.highlight .mh,
-.highlight .mo,
-.highlight .il { color: #0086b3; }
-.highlight .nc,
-.highlight .nn { color: #795da3; }
-.highlight .o,
-.highlight .p,
-.highlight .gd,
-.highlight .gi { color: #3c4043; }
-.highlight .err { background: transparent; }
+.post-content .highlight .c,
+.post-content .highlight .cm,
+.post-content .highlight .c1,
+.post-content .highlight .cs { color: #9a9a9a; font-style: italic; }
+.post-content .highlight .k,
+.post-content .highlight .kd,
+.post-content .highlight .kn,
+.post-content .highlight .kt { color: #a71d5d; font-weight: 600; }
+.post-content .highlight .s,
+.post-content .highlight .s1,
+.post-content .highlight .s2,
+.post-content .highlight .sb,
+.post-content .highlight .sd,
+.post-content .highlight .se,
+.post-content .highlight .sh,
+.post-content .highlight .si,
+.post-content .highlight .sx,
+.post-content .highlight .sr { color: #183691; }
+.post-content .highlight .nf,
+.post-content .highlight .na,
+.post-content .highlight .nb,
+.post-content .highlight .bp { color: #0086b3; }
+.post-content .highlight .m,
+.post-content .highlight .mi,
+.post-content .highlight .mf,
+.post-content .highlight .mh,
+.post-content .highlight .mo,
+.post-content .highlight .il { color: #0086b3; }
+.post-content .highlight .nc,
+.post-content .highlight .nn { color: #795da3; }
+.post-content .highlight .o,
+.post-content .highlight .p,
+.post-content .highlight .gd,
+.post-content .highlight .gi { color: #3c4043; }
+.post-content .highlight .err { background: transparent; }
 
 .post-content table {
   width: 100%;
