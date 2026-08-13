@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "🚀 博客搭建完成：基于 Jekyll + GitHub Pages 的第一篇文章"
+title: "博客搭建完成：基于 Jekyll + GitHub Pages 的第一篇文章"
 date: 2025-04-16 10:00:00 +0800
 categories: ["Jekyll", "GitHub Pages", "博客搭建"]
 tags: ["jekyll", "github-pages", "blog", "tutorial"]

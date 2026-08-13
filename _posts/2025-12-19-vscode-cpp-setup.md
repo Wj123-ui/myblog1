@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "🛠️ VS Code 下载与 C/C++ 环境配置"
+title: "VS Code 下载与 C/C++ 环境配置"
 date: 2025-12-19 12:52:34 +0800
 categories: ["开发工具", "C/C++", "教程"]
 tags: ["vscode", "mingw", "c", "cpp", "环境配置"]
@@ -32,7 +32,7 @@ excerpt: "从零开始配置 VS Code + MinGW-w64 的 C/C++ 开发环境，包含
 
 > 这篇文章记录了我配置 VS Code C/C++ 开发环境的完整过程，适合零基础的新手快速上手。
 
-## 1️⃣ 安装包一键直达
+## 1 安装包一键直达
 
 | 软件 | 版本 | 下载链接 | 备注 |
 |:---|:---|:---|:---|
@@ -41,13 +41,13 @@ excerpt: "从零开始配置 VS Code + MinGW-w64 的 C/C++ 开发环境，包含
 
 ⚠️ **注意**：MinGW 解压路径不要含中文或空格，推荐 `D:\mingw64`
 
-## 2️⃣ 安装 VS Code 插件
+## 2 安装 VS Code 插件
 
 1. 打开 VS Code → 左侧图标栏 Extensions（或快捷键 `Ctrl+Shift+X`）
 2. 搜索并安装 **Chinese (Simplified)** — 中文语言包
 3. 重启 VS Code，界面变成中文即成功
 
-## 3️⃣ 配置环境变量
+## 3 配置环境变量
 
 | 步骤 | 图解操作 |
 |:---|:---|
@@ -62,7 +62,7 @@ excerpt: "从零开始配置 VS Code + MinGW-w64 的 C/C++ 开发环境，包含
 gcc (x86_64-posix-seh-rev0, Built by MinGW-W64 project) 8.1.0
 ```
 
-## 4️⃣ 创建你的第一个 C 项目
+## 4 创建你的第一个 C 项目
 
 1. 新建文件夹 `D:\VSCode-C\Hello`
 2. VS Code → 文件 → 打开文件夹 → 选中 Hello
@@ -78,7 +78,7 @@ int main(void) {
 }
 ```
 
-## 5️⃣ 配置 IntelliSense & 编译任务
+## 5 配置 IntelliSense & 编译任务
 
 | 目的 | 操作路径 |
 |:---|:---|
@@ -96,7 +96,7 @@ int main(void) {
 └── c_cpp_properties.json // IntelliSense 配置
 ```
 
-## 6️⃣ 编译 & 运行
+## 6 编译 & 运行
 
 | 场景 | 快捷键 | 说明 |
 |:---|:---|:---|
@@ -110,7 +110,7 @@ Hello, 世界!
 请按任意键继续 . . .
 ```
 
-## 7️⃣ 美化彩蛋：一键主题推荐
+## 7 美化彩蛋：一键主题推荐
 
 在 Extensions 里搜索安装，瞬间颜值拉满：
 
@@ -120,7 +120,7 @@ Hello, 世界!
 | 🌈 SynthWave '84 | `synthwave` |
 | 📁 Material Icon Theme | `material icon` |
 
-## 8️⃣ 常见问题速查表
+## 8 常见问题速查表
 
 | 现象 | 解决 |
 |:---|:---|

@@ -2,22 +2,22 @@
 // 此文件由 minima 主题在编译初期导入，用于覆写默认 SCSS 变量
 // 实际视觉样式由 assets/css/custom.css 统一管理
 
-$brand-color: #c9a84c;
-$brand-color-light: #e0c068;
-$brand-color-dark: #8b6914;
+$brand-color: #202124;
+$brand-color-light: #646a73;
+$brand-color-dark: #000000;
 
-$background-color: #000000;
-$text-color: #f0f6fc;
-$text-color-light: #a8b3cf;
+$background-color: #f7f5f1;
+$text-color: #202124;
+$text-color-light: #646a73;
 
-$code-background-color: #0a0a0a;
+$code-background-color: #f1efe9;
 
-$table-text-color: #a8b3cf;
-$table-zebra-color: rgba(201, 168, 76, 0.05);
-$table-header-bg-color: rgba(201, 168, 76, 0.15);
-$table-header-border: #c9a84c;
-$table-border-color: rgba(201, 168, 76, 0.3);
+$table-text-color: #646a73;
+$table-zebra-color: #fbfaf7;
+$table-header-bg-color: #f1efe9;
+$table-header-border: #e5e3dd;
+$table-border-color: #e5e3dd;
 
-$grey-color: #666666;
-$grey-color-light: #999999;
-$grey-color-dark: #333333;
+$grey-color: #9aa0a6;
+$grey-color-light: #646a73;
+$grey-color-dark: #202124;
