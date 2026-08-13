@@ -49,4 +49,18 @@ layout: default
       <span class="post-last-update">最后更新：{{ page.date | date: "%Y-%m-%d" }}</span>
     </div>
   </footer>
+
+  <section class="post-comments" aria-label="评论">
+    <h2 class="comments-title">评论</h2>
+    <!-- 基于 GitHub Issues 的评论区（utterances）：
+         需在 https://github.com/apps/utterances 安装该 App 到本仓库后生效 -->
+    <script src="https://utteranc.es/client.js"
+            repo="Wj123-ui/myblog1"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+    </script>
+    <noscript><p class="comments-noscript">评论功能需要启用 JavaScript。</p></noscript>
+  </section>
 </article>

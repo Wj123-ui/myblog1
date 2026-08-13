@@ -1308,6 +1308,23 @@ figure.highlight code {
   color: var(--text-muted);
 }
 
+/* 文章评论区 */
+.post-comments {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.comments-title {
+  margin: 0 0 18px;
+  font-size: 18px;
+  font-weight: 650;
+  color: var(--text);
+}
+.comments-noscript {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
 /* ---------- 响应式 ---------- */
 
 @media (max-width: 760px) {
