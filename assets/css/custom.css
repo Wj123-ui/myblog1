@@ -5,6 +5,9 @@
    ============================================================ */
 
 :root {
+  /* 声明浅色配色，避免浏览器自动暗色/强制反色干扰 */
+  color-scheme: light;
+
   /* 色彩 */
   --bg: #f7f5f1;
   --bg-elevated: #ffffff;
@@ -336,9 +339,12 @@ body.custom-cursor * {
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-  background: var(--ink);
-  border: 1px solid var(--ink);
+  background: #000;
+  border: 1px solid #000;
   border-radius: 8px;
+  /* 强制自身合成层，避免静止状态下文字未绘制（Chrome 合成层 bug） */
+  transform: translateZ(0);
+  will-change: transform;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .btn-primary:hover {
@@ -360,10 +366,12 @@ body.custom-cursor * {
   padding: 8px 22px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--ink);
+  color: #000;
   background: transparent;
-  border: 1px solid var(--ink);
+  border: 1px solid #000;
   border-radius: 8px;
+  transform: translateZ(0);
+  will-change: transform;
   transition: background-color 0.2s, transform 0.2s;
 }
 .btn-secondary:hover {
@@ -387,6 +395,8 @@ body.custom-cursor * {
   background: var(--bg-elevated);
   border: 1px solid var(--border-strong);
   border-radius: 8px;
+  transform: translateZ(0);
+  will-change: transform;
   transition: border-color var(--transition), color var(--transition),
     background-color var(--transition);
 }
