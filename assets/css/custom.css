@@ -1238,10 +1238,11 @@ div.highlight,
 figure.highlight {
   margin: 0 0 20px;
   padding: 18px 22px;
-  background: #1f2023;
+  background: #f6f4ef;
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow-x: auto;
-  color: #e6e6e6;
+  color: #3c4043;
 }
 .post-content pre code,
 div.highlight code,
@@ -1251,8 +1252,45 @@ figure.highlight code {
   border: none;
   font-size: 13.5px;
   line-height: 1.7;
-  color: #e6e6e6;
+  color: #3c4043;
 }
+
+/* 语法高亮（GitHub Light 配色，适配浅色代码块背景） */
+.highlight .c,
+.highlight .cm,
+.highlight .c1,
+.highlight .cs { color: #9a9a9a; font-style: italic; }
+.highlight .k,
+.highlight .kd,
+.highlight .kn,
+.highlight .kt { color: #a71d5d; font-weight: 600; }
+.highlight .s,
+.highlight .s1,
+.highlight .s2,
+.highlight .sb,
+.highlight .sd,
+.highlight .se,
+.highlight .sh,
+.highlight .si,
+.highlight .sx,
+.highlight .sr { color: #183691; }
+.highlight .nf,
+.highlight .na,
+.highlight .nb,
+.highlight .bp { color: #0086b3; }
+.highlight .m,
+.highlight .mi,
+.highlight .mf,
+.highlight .mh,
+.highlight .mo,
+.highlight .il { color: #0086b3; }
+.highlight .nc,
+.highlight .nn { color: #795da3; }
+.highlight .o,
+.highlight .p,
+.highlight .gd,
+.highlight .gi { color: #3c4043; }
+.highlight .err { background: transparent; }
 
 .post-content table {
   width: 100%;
