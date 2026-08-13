@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "📖 STM32 LL 库函数速查手册：GPIO · TIM · USART · ADC · DMA · SPI · I2C"
+title: "STM32 LL 库函数速查手册：GPIO · TIM · USART · ADC · DMA · SPI · I2C"
 date: 2026-07-15 20:00:00 +0800
 categories: ["STM32", "嵌入式开发", "教程"]
 tags: ["stm32", "ll-library", "hal", "gpio", "timer", "usart", "adc", "dma", "spi", "i2c", "嵌入式"]

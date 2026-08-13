@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "🎨 博客视觉升级：CSS 动画与交互特效实践"
+title: "博客视觉升级：CSS 动画与交互特效实践"
 date: 2025-04-16 14:00:00 +0800
 categories: ["前端开发", "CSS", "Jekyll"]
 tags: ["css", "animation", "jekyll", "frontend", "ui-design"]

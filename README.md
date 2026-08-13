@@ -1,8 +1,8 @@
-# ⚡ 电气自动化与嵌入式开发博客
+# 电气自动化与嵌入式开发博客
 
 基于 **Jekyll + GitHub Pages** 构建的个人技术博客，专注电气自动化、嵌入式系统与硬件设计。
 
-## 🔧 技术栈
+## 技术栈
 
 - **静态站点**: Jekyll 4.3 + Minima 主题
 - **托管**: GitHub Pages
@@ -10,7 +10,7 @@
 - **特效**: Canvas 粒子动画 · 鼠标跟随光效 · 3D 倾斜卡 · 滚动渐入
 - **插件**: jekyll-feed · jekyll-seo-tag · jekyll-sitemap
 
-## 📁 目录结构
+## 目录结构
 
 ```
 AIxiangmu/
@@ -33,7 +33,7 @@ AIxiangmu/
 └── 404.md               # 404 错误页
 ```
 
-## 🚀 本地运行
+## 本地运行
 
 ```bash
 # 安装依赖
@@ -45,7 +45,7 @@ bundle exec jekyll serve
 # 访问 http://localhost:4000/myblog1
 ```
 
-## 🎨 设计特色
+## 设计特色
 
 - **深色主题**: 多层叠加的径向渐变背景 + CSS 网格装饰
 - **玻璃拟态**: `backdrop-filter: blur()` 毛玻璃卡片 + 光泽扫过动画
@@ -55,13 +55,13 @@ bundle exec jekyll serve
 - **进度条**: 页面顶部阅读进度指示器
 - **无障碍**: 支持 `prefers-reduced-motion`、键盘导航、屏幕阅读器
 
-## 📝 内容方向
+## 内容方向
 
 - 电气自动化 (PLC 编程、工控通讯、SCADA)
 - 嵌入式开发 (STM32、ESP32、Arduino、FreeRTOS)
 - 硬件设计 (PCB Layout、电路设计、示波器调试)
 - 编程工具 (VS Code、Keil/IAR、Git)
 
-## 📄 许可
+## 许可
 
 MIT License
