@@ -13,6 +13,15 @@
         </svg>
         Email
       </a>
+      <!-- QQ 没有可靠的网页直达链接（wpa.qq.com/msgrd 那类老接口不保证可用），
+           做成点击复制号码；号码同时显示在按钮上，长按也能选中。
+           用 class 而不是 id 绑定：关于页在「联系我」和页脚各有一个，不能用重复 id。 -->
+      <button type="button" class="social-btn js-qq-copy" data-qq="3554786480" aria-label="复制 QQ 号 3554786480">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+          <path d="M3.5 2.5h9a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H7.2l-3.4 2.9a.5.5 0 0 1-.83-.38V11.4A2 2 0 0 1 1.5 9.5v-5a2 2 0 0 1 2-2Z"/>
+        </svg>
+        <span class="js-qq-label">QQ 3554786480</span>
+      </button>
     </div>
 
     <p class="footer-copyright">
@@ -20,3 +29,47 @@
     </p>
   </div>
 </footer>
+
+<script>
+// 页脚里所有「点击复制 QQ 号」按钮。本站走 HTTP、不属于安全上下文，
+// navigator.clipboard 在线上不可用，所以保留了 execCommand 兜底。
+(function () {
+  var buttons = document.querySelectorAll('.js-qq-copy');
+  Array.prototype.forEach.call(buttons, function (btn) {
+    var label = btn.querySelector('.js-qq-label') || btn;
+    var qq = btn.getAttribute('data-qq');
+    var original = label.textContent;
+    var timer = 0;
+
+    function flash(text) {
+      label.textContent = text;
+      clearTimeout(timer);
+      timer = setTimeout(function () { label.textContent = original; }, 1600);
+    }
+
+    function legacyCopy() {
+      var input = document.createElement('input');
+      input.value = qq;
+      input.setAttribute('readonly', 'readonly');
+      input.style.position = 'fixed';
+      input.style.opacity = '0';
+      document.body.appendChild(input);
+      input.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(input);
+      flash(ok ? '已复制 ' + qq : 'QQ ' + qq + '（请长按复制）');
+    }
+
+    btn.addEventListener('click', function () {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(qq).then(function () {
+          flash('已复制 ' + qq);
+        }, legacyCopy);
+      } else {
+        legacyCopy();
+      }
+    });
+  });
+})();
+</script>
