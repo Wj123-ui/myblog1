@@ -55,6 +55,56 @@ permalink: /about/
         </svg>
         Email
       </a>
+      <!-- QQ 没有可靠的网页直达链接，做成点击复制号码；号码本身也显示在按钮上，
+           手机上长按即可选中，脚本失效时也不影响查看 -->
+      <button type="button" class="social-btn social-btn--compact" id="qq-copy" data-qq="3554786480">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+          <path d="M3.5 2.5h9a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H7.2l-3.4 2.9a.5.5 0 0 1-.83-.38V11.4A2 2 0 0 1 1.5 9.5v-5a2 2 0 0 1 2-2Z"/>
+        </svg>
+        <span id="qq-label">QQ 3554786480</span>
+      </button>
     </div>
   </div>
 </div>
+
+<script>
+(function () {
+  var btn = document.getElementById('qq-copy');
+  if (!btn) return;
+  var label = document.getElementById('qq-label');
+  var qq = btn.getAttribute('data-qq');
+  var original = label.textContent;
+  var timer = 0;
+
+  function flash(text) {
+    label.textContent = text;
+    clearTimeout(timer);
+    timer = setTimeout(function () { label.textContent = original; }, 1600);
+  }
+
+  function legacyCopy() {
+    var input = document.createElement('input');
+    input.value = qq;
+    input.setAttribute('readonly', 'readonly');
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(input);
+    flash(ok ? '已复制 ' + qq : 'QQ ' + qq + '（请长按复制）');
+  }
+
+  btn.addEventListener('click', function () {
+    // 本站走 HTTP，不属于安全上下文，clipboard API 多半不可用，故保留 execCommand 兜底
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(qq).then(function () {
+        flash('已复制 ' + qq);
+      }, legacyCopy);
+    } else {
+      legacyCopy();
+    }
+  });
+})();
+</script>

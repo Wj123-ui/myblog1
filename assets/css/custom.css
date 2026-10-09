@@ -433,6 +433,13 @@ body.custom-cursor * {
   width: 15px;
   height: 15px;
 }
+/* QQ 是「点击复制号码」的按钮（QQ 没有可靠的网页直达链接），
+   这里补上 <button> 与相邻 <a> 之间的默认样式差异，让两者外观一致 */
+button.social-btn {
+  font-family: inherit;
+  cursor: pointer;
+  transform: translateZ(0);
+}
 .social-btn--alt {
   background: transparent;
 }
