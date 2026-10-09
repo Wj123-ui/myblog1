@@ -47,8 +47,8 @@ permalink: /downloads/
         <div class="field">
           <label for="file-input">选择文件</label>
           <!-- 上传控件由 files.js 替换为拖放区域，无脚本时退回原生 input -->
-          <input type="file" id="file-input" required>
-          <p class="field-hint" id="file-hint">支持安装包、固件、压缩包与文档</p>
+          <input type="file" id="file-input" multiple required>
+          <p class="field-hint" id="file-hint">支持安装包、固件、压缩包与文档，可一次选择多个文件；与已有文件同名的会被自动驳回</p>
         </div>
 
         <div class="field-row">

@@ -12,7 +12,8 @@
     keyword: '',
     category: '',
     stats: null,
-    loading: false
+    loading: false,
+    uploading: false
   };
 
   var el = {};
@@ -304,78 +305,227 @@
 
   /* ---------------- 上传 ---------------- */
 
+  function selectedFiles() {
+    return el.fileInput.files ? Array.prototype.slice.call(el.fileInput.files) : [];
+  }
+
   function onFileChange() {
-    var file = el.fileInput.files && el.fileInput.files[0];
-    var text = file
-      ? file.name + '（' + formatSize(file.size) + '）'
-      : '点击选择文件，或把文件拖到这里';
-    el.fileHint.textContent = file ? '已选择：' + text : '支持安装包、固件、压缩包与文档';
+    var files = selectedFiles();
+    var text;
+    if (!files.length) {
+      text = '点击选择文件，或把文件拖到这里';
+    } else if (files.length === 1) {
+      text = files[0].name + '（' + formatSize(files[0].size) + '）';
+    } else {
+      var total = files.reduce(function (sum, f) { return sum + f.size; }, 0);
+      text = '已选 ' + files.length + ' 个文件（共 ' + formatSize(total) + '）';
+    }
+    el.fileHint.textContent = files.length
+      ? '已选择：' + text
+      : '支持安装包、固件、压缩包与文档，可一次选择多个';
     refreshDropZoneText(text);
+  }
+
+  /* 上传单个文件。返回 Promise，永不 reject，结果统一是
+     { ok, name, status, message }，方便批量时逐个汇总。 */
+  function uploadOne(file, index, total) {
+    return new Promise(function (resolve) {
+      var params = '?name=' + encodeURIComponent(file.name)
+        + '&category=' + encodeURIComponent(el.categorySelect.value || '')
+        + '&uploader=' + encodeURIComponent(el.uploaderInput.value.trim())
+        + '&note=' + encodeURIComponent(el.noteInput.value.trim());
+
+      var xhr = new window.XMLHttpRequest();
+      xhr.open('PUT', API + '/upload' + params, true);
+      xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+      xhr.setRequestHeader('Accept', 'application/json');
+
+      var tag = total > 1 ? '（' + (index + 1) + '/' + total + '）' + file.name + ' ' : '';
+
+      xhr.upload.addEventListener('progress', function (e) {
+        if (!e.lengthComputable) { return; }
+        var pct = Math.round(e.loaded / e.total * 100);
+        // 批量时进度条走整批的比例，单文件时就是它自己的比例
+        var overall = total > 1
+          ? Math.round((index + e.loaded / e.total) / total * 100)
+          : pct;
+        el.progressBar.style.width = overall + '%';
+        setStatus(el.uploadHint, '正在上传 ' + tag + pct + '%');
+      });
+
+      xhr.addEventListener('load', function () {
+        var data = {};
+        try { data = JSON.parse(xhr.responseText); } catch (e) { data = {}; }
+        if (xhr.status >= 200 && xhr.status < 300 && data.ok !== false) {
+          resolve({ ok: true, name: file.name, status: xhr.status,
+                    message: data.message || '上传成功' });
+        } else {
+          resolve({ ok: false, name: file.name, status: xhr.status,
+                    message: data.error || ('上传失败（HTTP ' + xhr.status + '）') });
+        }
+      });
+
+      xhr.addEventListener('error', function () {
+        resolve({ ok: false, name: file.name, status: 0,
+                  message: '网络中断，这个文件没有传完' });
+      });
+
+      xhr.send(file);
+    });
+  }
+
+  /* 顺序上传一批文件。逐个传而不是并发：进度提示更清楚，
+     也不会一次性把上行带宽占满、或瞬间撞掉服务端的限流。 */
+  function runBatch(files) {
+    var summary = { ok: 0, failed: [], skipped: 0, lastMessage: '' };
+    var i = 0;
+
+    function step() {
+      if (i >= files.length) { return Promise.resolve(); }
+      var index = i;
+      var file = files[i];
+      i += 1;
+      return uploadOne(file, index, files.length).then(function (res) {
+        if (res.ok) {
+          summary.ok += 1;
+          summary.lastMessage = res.message;
+        } else {
+          summary.failed.push(res);
+          if (res.status === 429) {
+            // 已经被限流了，剩下的传上去也会被拒：停下来并说明还剩几个没传
+            summary.skipped = files.length - i;
+            return;
+          }
+        }
+        return step();
+      });
+    }
+
+    return step().then(function () { return summary; });
+  }
+
+  /* 上传前预检文件名：命中重名或类型不支持的文件直接跳过，不上传。
+
+     为什么要预检：服务端在读完正文前拒绝时（同名、类型不符），由于 nginx 配了
+     proxy_request_buffering off，客户端正文还在发就拿不到响应，浏览器只会看到
+     「HTTP 502」。所以先问一句 /api/check-name，命中就根本不上传；
+     服务端落库前仍会再查一次兜底，那一次能干净地返回 409。 */
+  function preflight(files) {
+    var result = { allowed: [], skipped: [] };
+    var chain = Promise.resolve();
+    files.forEach(function (file) {
+      chain = chain.then(function () {
+        return api('/check-name?name=' + encodeURIComponent(file.name)).then(function (data) {
+          if (data.exists) {
+            result.skipped.push({ name: file.name, message: data.message || '同名文件已存在，请换一个文件名' });
+          } else if (data.ext_allowed === false) {
+            result.skipped.push({ name: file.name, message: data.ext_message || '不支持的文件类型' });
+          } else {
+            result.allowed.push(file);
+          }
+        }).catch(function () {
+          // 预检本身失败（网络抖动、服务未就绪）不该挡着上传，交给服务端判定
+          result.allowed.push(file);
+        });
+      });
+    });
+    return chain.then(function () { return result; });
+  }
+
+  function describeFailures(failed) {
+    return failed.map(function (r) {
+      var prefix = (failed.length > 1 && r.message.indexOf(r.name) === -1) ? r.name + '：' : '';
+      return prefix + r.message;
+    }).join('；');
   }
 
   function onSubmit(event) {
     event.preventDefault();
-    var file = el.fileInput.files && el.fileInput.files[0];
-    if (!file) {
+    if (state.uploading) { return; }
+
+    var files = selectedFiles();
+    if (!files.length) {
       setStatus(el.uploadHint, '请先选择文件', 'error');
       return;
     }
-    if (state.stats && file.size > state.stats.max_file_bytes) {
+
+    // 客户端先挡掉超限文件：省得白传，也让提示更直接
+    var limit = state.stats ? state.stats.max_file_bytes : 0;
+    var tooBig = limit ? files.filter(function (f) { return f.size > limit; }) : [];
+    if (tooBig.length) {
       setStatus(el.uploadHint,
-        '文件 ' + formatSize(file.size) + ' 超过 ' + formatSize(state.stats.max_file_bytes) + ' 上限',
+        '以下文件超过 ' + formatSize(limit) + ' 上限：'
+        + tooBig.map(function (f) { return f.name + '（' + formatSize(f.size) + '）'; }).join('、'),
         'error');
       return;
     }
 
-    var params = '?name=' + encodeURIComponent(file.name)
-      + '&category=' + encodeURIComponent(el.categorySelect.value || '')
-      + '&uploader=' + encodeURIComponent(el.uploaderInput.value.trim())
-      + '&note=' + encodeURIComponent(el.noteInput.value.trim());
-
-    var xhr = new window.XMLHttpRequest();
-    xhr.open('PUT', API + '/upload' + params, true);
-    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-    xhr.setRequestHeader('Accept', 'application/json');
-
+    state.uploading = true;
     el.uploadSubmit.disabled = true;
     el.progress.hidden = false;
     el.progressBar.style.width = '0%';
-    setStatus(el.uploadHint, '正在上传…');
+    setStatus(el.uploadHint, files.length > 1 ? '正在检查 ' + files.length + ' 个文件…' : '正在检查…');
 
-    xhr.upload.addEventListener('progress', function (e) {
-      if (e.lengthComputable) {
-        var pct = Math.round(e.loaded / e.total * 100);
-        el.progressBar.style.width = pct + '%';
-        setStatus(el.uploadHint, '正在上传… ' + pct + '%');
-      }
-    });
+    preflight(files).then(function (pre) {
+      var skipped = pre.skipped;
 
-    xhr.addEventListener('load', function () {
-      el.uploadSubmit.disabled = false;
-      var data = {};
-      try { data = JSON.parse(xhr.responseText); } catch (e) { data = {}; }
-
-      if (xhr.status >= 200 && xhr.status < 300 && data.ok !== false) {
-        el.progressBar.style.width = '100%';
-        setStatus(el.uploadHint, data.message || '上传成功', 'ok');
+      function wrapUp(summary) {
+        state.uploading = false;
+        el.uploadSubmit.disabled = false;
+        el.progress.hidden = true;
+        reportBatch(skipped, summary || { ok: 0, failed: [], skipped: 0, lastMessage: '' });
         el.form.reset();
         onFileChange();
-        loadStats();
-        loadFiles(true);
-        if (window.localStorage.getItem(TOKEN_KEY)) { loadAdmin(); }
-      } else {
-        el.progress.hidden = true;
-        setStatus(el.uploadHint, data.error || ('上传失败（HTTP ' + xhr.status + '）'), 'error');
+        if ((summary && summary.ok) || skipped.length) {
+          loadStats();
+          loadFiles(true);
+          if (window.localStorage.getItem(TOKEN_KEY)) { loadAdmin(); }
+        }
       }
-    });
 
-    xhr.addEventListener('error', function () {
-      el.uploadSubmit.disabled = false;
-      el.progress.hidden = true;
-      setStatus(el.uploadHint, '网络中断，上传未完成', 'error');
-    });
+      if (!pre.allowed.length) {
+        // 全被预检拦下，没必要再走一遍上传
+        wrapUp(null);
+        return;
+      }
 
-    xhr.send(file);
+      setStatus(el.uploadHint, pre.allowed.length > 1
+        ? '正在上传 1/' + pre.allowed.length + '…'
+        : '正在上传…');
+      return runBatch(pre.allowed).then(function (summary) {
+        if (summary.ok) { el.progressBar.style.width = '100%'; }
+        wrapUp(summary);
+      });
+    });
+  }
+
+  /* 汇总整批结果：预检跳过的（重名/类型不符）与上传阶段失败的合并成一句话。 */
+  function reportBatch(skipped, summary) {
+    var failedList = (summary.failed || []).slice();
+    var bad = skipped.length + failedList.length;
+
+    if (!bad && !summary.skipped) {
+      setStatus(el.uploadHint,
+        summary.ok === 1 ? (summary.lastMessage || '上传成功')
+                         : summary.ok + ' 个文件已全部提交，管理员审核通过后即可公开下载',
+        'ok');
+      return;
+    }
+
+    var parts = [];
+    if (skipped.length) { parts.push(describeFailures(skipped)); }
+    if (failedList.length) { parts.push(describeFailures(failedList)); }
+    if (summary.skipped) {
+      parts.push('已达上传频率上限，剩余 ' + summary.skipped + ' 个未上传（可稍后再传）');
+    }
+
+    if (summary.ok) {
+      setStatus(el.uploadHint,
+        '成功 ' + summary.ok + ' 个；另有 ' + (bad + (summary.skipped || 0)) + ' 个未上传 —— '
+        + parts.join('；'), 'error');
+    } else {
+      setStatus(el.uploadHint, parts.join('；'), 'error');
+    }
   }
 
   /* ---------------- 审核 ---------------- */

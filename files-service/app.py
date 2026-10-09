@@ -280,6 +280,18 @@ class Store(object):
                 " ORDER BY created_at LIMIT 1", {'sha': sha}).fetchone()
         return dict(row) if row else None
 
+    def find_by_name(self, name):
+        """按文件名查已有记录，用于「同名文件自动驳回」。
+
+        忽略大小写：Tool.zip 与 tool.zip 视为同名，避免列表里出现难以分辨的两条。
+        已驳回的记录不占名字——否则同名文件被驳回后就永远传不上来了。
+        """
+        with self._lock:
+            row = self.conn.execute(
+                "SELECT * FROM files WHERE lower(name) = lower(:name) AND status <> 'rejected'"
+                " ORDER BY created_at LIMIT 1", {'name': name}).fetchone()
+        return dict(row) if row else None
+
     def list_published(self, keyword, like, category, limit, offset):
         params = {'kw': keyword, 'like': like, 'category': category,
                   'limit': limit, 'offset': offset}
@@ -400,6 +412,14 @@ def content_disposition(name):
     return "attachment; filename=\"%s\"; filename*=UTF-8''%s" % (fallback, quote(name, safe=''))
 
 
+def name_conflict_message(existing):
+    """同名冲突的提示语。区分待审核与已发布，上传者才知道下一步该做什么。"""
+    if existing['status'] == 'pending':
+        return ('同名文件「%s」已在待审核队列中，请换一个文件名，'
+                '或等管理员审核后再试' % existing['name'])
+    return '同名文件「%s」已存在，请换一个文件名' % existing['name']
+
+
 def public_record(row):
     """对外暴露的字段：不含磁盘上的存储名与上传者 IP。"""
     return {
@@ -518,6 +538,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.handle_stats()
             if path == '/api/files':
                 return self.handle_list(parse_qs(parts.query))
+            if path == '/api/check-name':
+                return self.handle_check_name(parse_qs(parts.query))
             if path.startswith('/api/download/'):
                 return self.handle_download(path.rsplit('/', 1)[-1])
             if path == '/api/admin/list':
@@ -567,6 +589,35 @@ class Handler(BaseHTTPRequestHandler):
             return self.fail(500, '服务器内部错误')
 
     # ---------- 读接口 ----------
+
+    def handle_check_name(self, qs):
+        """上传前的文件名预检。
+
+        为什么要单独一个接口：/api/upload 在读完正文之前就拒绝时（比如同名、类型不符），
+        因为 nginx 配了 proxy_request_buffering off，正文还在发的客户端拿不到这个响应，
+        nginx 只能回 502。大文件重名时会看到「HTTP 502」而不是原因说明。
+        所以前端先问一句，命中就根本不上传；服务端在落库前仍会再查一次兜底，
+        那一次正文已经读完，能干净地返回 409。
+        """
+        raw = qs.get('name', [''])[0]
+        if not raw:
+            return self.fail(400, '缺少文件名')
+        try:
+            name, ext = clean_name(raw)
+        except ValueError as exc:
+            return self.fail(400, str(exc))
+
+        existing = store().find_by_name(name)
+        payload = {'name': name, 'ext': ext, 'exists': bool(existing)}
+        if existing:
+            payload['message'] = name_conflict_message(existing)
+            payload['status'] = existing['status']
+        if ext not in CFG.allowed_exts:
+            payload['ext_allowed'] = False
+            payload['ext_message'] = '不支持的文件类型 .%s' % ext
+        else:
+            payload['ext_allowed'] = True
+        return self.ok(payload)
 
     def handle_stats(self):
         info = store().stats()
@@ -706,6 +757,19 @@ class Handler(BaseHTTPRequestHandler):
             return self.fail(400, '传输不完整（收到 %d 字节，声明 %d 字节），请重试' % (received, length))
 
         sha = digest.hexdigest()
+
+        # 同名驳回放在正文读完之后：这是唯一能稳定送达客户端的时机。
+        # 放在读正文之前会更快，但 nginx 配的是 proxy_request_buffering off，
+        # 正文还没传完客户端就断开，nginx 只能回 502，用户看到的是一个「服务器错误」
+        # 而不是「同名文件已存在」。前端另有 /api/check-name 预检，正常情况下
+        # 重名在选中文件的那一刻就被拦下，这里只是落库前的兜底（也挡住绕过前端的调用）。
+        conflict = store().find_by_name(name)
+        if conflict:
+            tmp_dir().unlink(part)
+            LOG.info('同名驳回 name=%s 已有 id=%s status=%s',
+                     name, conflict['id'], conflict['status'])
+            return self.fail(409, name_conflict_message(conflict))
+
         existing = store().find_by_sha(sha)
         if existing:
             tmp_dir().unlink(part)

@@ -196,6 +196,44 @@ def main():
     check('遍历型文件名被清洗', status in (200, 201) and saved_name == 'passwd.zip',
           'status=%s name=%r' % (status, saved_name))
 
+    # ---- 同名驳回 ----
+    # 服务端在读完正文前就拒绝并关闭连接，客户端可能拿不到状态码（与超限用例同理），
+    # 所以这里允许 None，但拿到状态码时必须是 409。
+    status, data = upload(client, 'selftest-%s.bin' % suffix, payload, uploader='自检重复')
+    check('同名文件被自动驳回', status in (409, None),
+          'status=%s body=%s' % (status, data))
+    if status is not None:
+        check('同名驳回的提示说明了原因', '同名' in (data.get('error') or ''),
+              'error=%r' % data.get('error'))
+
+    status, _ = upload(client, 'SELFTEST-%s.BIN' % suffix, payload)
+    check('仅大小写不同的同名文件也被驳回', status in (409, None), 'status=%s' % status)
+
+    # ---- 上传前预检 ----
+    # 前端靠它在上传前拦下重名/类型不符的文件——服务端读正文前的拒绝经 nginx 会变成 502
+    status, _, body = client.request(
+        'GET', '/api/check-name?name=' + urllib.parse.quote('selftest-%s.bin' % suffix))
+    data = parse_json(body)
+    check('预检接口识别出已占用的文件名',
+          status == 200 and data.get('exists') is True, 'status=%s body=%s' % (status, data))
+
+    status, _, body = client.request(
+        'GET', '/api/check-name?name=' + urllib.parse.quote('unused-%s.zip' % suffix))
+    data = parse_json(body)
+    check('预检接口对可用文件名返回 exists=false',
+          status == 200 and data.get('exists') is False and data.get('ext_allowed') is True,
+          'status=%s body=%s' % (status, data))
+
+    status, _, body = client.request('GET', '/api/check-name?name=evil.sh')
+    data = parse_json(body)
+    check('预检接口识别出不支持的类型',
+          status == 200 and data.get('ext_allowed') is False, 'status=%s body=%s' % (status, data))
+
+    status, data = upload(client, 'selftest-%s-b.bin' % suffix, os.urandom(4096))
+    second_id = (data.get('file') or {}).get('id')
+    check('不同文件名可正常上传（批量上传的前提）',
+          status in (200, 201) and bool(second_id), 'status=%s body=%s' % (status, data))
+
     if TOKEN and need_approval:
         status, _, body = client.request('POST', '/api/admin/approve/%s' % file_id,
                                          headers={'X-Admin-Token': TOKEN})
@@ -241,7 +279,7 @@ def main():
     check('无令牌访问管理接口被拒', status == 403, 'status=%s' % status)
 
     if TOKEN:
-        for fid in [fid for fid in (file_id, probe_id) if fid]:
+        for fid in [fid for fid in (file_id, probe_id, second_id) if fid]:
             client.request('POST', '/api/admin/delete/%s' % fid,
                            headers={'X-Admin-Token': TOKEN})
         print('  [清理] 已删除自检产生的文件')
