@@ -1,14 +1,5 @@
 <header class="site-header" role="banner">
   <div class="header-container">
-    <a href="{{ '/' | relative_url }}" class="site-title" aria-label="返回首页">
-      <span class="logo-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path d="M13.5,2 L8.5,13 L11,13 L9.5,22 L17.5,10 L14.5,10 L17.5,2 Z"/>
-        </svg>
-      </span>
-      <span class="title-text">{{ site.title }}</span>
-    </a>
-
     <nav class="desktop-nav" aria-label="主导航">
       <ul class="nav-list">
         <li><a href="{{ '/' | relative_url }}" class="nav-link" {% if page.url == '/' or page.url == '/index.html' %}aria-current="page"{% endif %}>首页</a></li>
