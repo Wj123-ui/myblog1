@@ -117,33 +117,3 @@ layout: default
     </div>
   </div>
 </noscript>
-
-<div class="section-header">
-  <h2 class="section-title"><span class="section-hash" aria-hidden="true">#</span>最新文章</h2>
-</div>
-
-<div class="posts-list">
-{% for post in site.posts limit:6 %}
-  <a href="{{ post.url | relative_url }}" class="post-item">
-    <div class="post-meta">
-      <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
-      {% if post.tags %}
-        <div class="post-tags">
-          {% for tag in post.tags limit:2 %}
-            <span class="post-tag">{{ tag }}</span>
-          {% endfor %}
-        </div>
-      {% endif %}
-      <span class="post-arrow" aria-hidden="true">→</span>
-    </div>
-    <span class="post-title">{{ post.title }}</span>
-    {% if post.excerpt %}
-      <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 90 }}</p>
-    {% endif %}
-  </a>
-{% endfor %}
-</div>
-
-<div class="cta-wrapper">
-  <a href="{{ '/archive/' | relative_url }}" class="cta-link">查看所有文章 →</a>
-</div>
