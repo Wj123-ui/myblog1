@@ -7,6 +7,7 @@
   python deploy.py --no-build     # 跳过构建，直接上传 _site
   python deploy.py --setup        # 额外执行服务器初始化（装 nginx、装站点配置）
   python deploy.py --files        # 一并部署文件分享服务（app.py + systemd + nginx 配置）
+  python deploy.py --selftest     # 在服务器上跑文件服务的端到端自检（需 --files 已部署过）
   python deploy.py --prune        # 删除远端已下线的旧文件（本地构建里不存在的）
   python deploy.py --smoke        # 上传后跑一轮 HTTP 冒烟检查
 
@@ -22,7 +23,7 @@
 
 依赖：pip install paramiko
 """
-import os, sys, posixpath, subprocess
+import os, sys, io, posixpath, subprocess
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE_DIR = os.path.join(ROOT, '_site')
@@ -89,6 +90,20 @@ def run(client, cmd, quiet=False):
     if code != 0:
         raise SystemExit('远端命令失败（exit %d）: %s' % (code, cmd))
     return out
+
+
+def put_text(sftp, local, remote):
+    """上传文本文件，并把 CRLF 归一化成 LF。
+
+    Windows 上 core.autocrlf=true 会把工作区签出成 CRLF，而 paramiko 的 put() 是
+    二进制上传、原样保留。Python/HTML 带 CRLF 无所谓，但 shell 脚本会静默失效：
+    `set -euo pipefail\\r` 里的 \\r 被当成选项名的一部分，bash 报
+    「set: pipefail: invalid option name」。这里统一转 LF，避免再次踩到。
+    仓库侧还有 .gitattributes 兜底（*.sh 固定 eol=lf）。
+    """
+    with io.open(local, 'rb') as fh:
+        data = fh.read().replace(b'\r\n', b'\n')
+    sftp.putfo(io.BytesIO(data), remote)
 
 
 def mkdirs(sftp, remote_dir):
@@ -184,14 +199,17 @@ def deploy_files_service(client, cfg, setup=False):
     print('==> 同步文件分享服务代码')
     sftp = client.open_sftp()
     try:
-        sftp.put(os.path.join(SERVICE_DIR, 'app.py'), '/root/myblog-files-app.py')
-        sftp.put(os.path.join(SERVICE_DIR, 'selftest.py'), '/root/myblog-files-selftest.py')
-        sftp.put(os.path.join(SERVICE_DIR, 'myblog-files.service'),
+        put_text(sftp, os.path.join(SERVICE_DIR, 'app.py'), '/root/myblog-files-app.py')
+        put_text(sftp, os.path.join(SERVICE_DIR, 'selftest.py'),
+                 '/root/myblog-files-selftest.py')
+        put_text(sftp, os.path.join(SERVICE_DIR, 'myblog-files.service'),
                  '/root/myblog-files.service')
-        sftp.put(os.path.join(SERVICE_DIR, 'setup_files_server.sh'),
+        put_text(sftp, os.path.join(SERVICE_DIR, 'setup_files_server.sh'),
                  '/root/myblog-files-setup.sh')
-        sftp.put(os.path.join(ROOT, 'deploy', 'nginx.conf'), '/root/myblog1-nginx.conf')
-        sftp.put(os.path.join(ROOT, 'deploy', 'setup_server.sh'), '/root/myblog1-setup.sh')
+        put_text(sftp, os.path.join(ROOT, 'deploy', 'nginx.conf'),
+                 '/root/myblog1-nginx.conf')
+        put_text(sftp, os.path.join(ROOT, 'deploy', 'setup_server.sh'),
+                 '/root/myblog1-setup.sh')
     finally:
         sftp.close()
 
@@ -205,6 +223,19 @@ def deploy_files_service(client, cfg, setup=False):
 
     print('==> 重新校验并重载 nginx')
     run(client, 'nginx -t && systemctl reload nginx')
+
+
+def selftest_files(client, cfg, base='http://127.0.0.1'):
+    """在服务器上跑文件服务的端到端自检。
+
+    走 nginx（默认 http://127.0.0.1）而不是直连 :8000，这样下载字节与 Range 的
+    断言才会真正执行——直连时文件由 nginx 依 X-Accel-Redirect 发出，Python 只回响应头。
+    ADMIN_TOKEN 从服务的环境文件里取，不 source 整个文件（避免执行其内容）。
+    """
+    print('==> 运行文件服务自检（%s）' % base)
+    cmd = ("ADMIN_TOKEN=$(sed -n 's/^ADMIN_TOKEN=//p' /etc/myblog-files.env | head -1) "
+           "python3 /root/myblog-files-selftest.py %s" % base)
+    run(client, cmd)
 
 
 def main():
@@ -225,8 +256,10 @@ def main():
             print('==> 执行服务器初始化')
             sftp = client.open_sftp()
             try:
-                sftp.put(os.path.join(ROOT, 'deploy', 'nginx.conf'), '/root/myblog1-nginx.conf')
-                sftp.put(os.path.join(ROOT, 'deploy', 'setup_server.sh'), '/root/myblog1-setup.sh')
+                put_text(sftp, os.path.join(ROOT, 'deploy', 'nginx.conf'),
+                         '/root/myblog1-nginx.conf')
+                put_text(sftp, os.path.join(ROOT, 'deploy', 'setup_server.sh'),
+                         '/root/myblog1-setup.sh')
             finally:
                 sftp.close()
             run(client, 'bash /root/myblog1-setup.sh')
@@ -237,6 +270,9 @@ def main():
 
         if '--files' in args:
             deploy_files_service(client, cfg, setup='--setup' in args)
+
+        if '--selftest' in args:
+            selftest_files(client, cfg)
 
         if '--prune' in args:
             prune(client, cfg)

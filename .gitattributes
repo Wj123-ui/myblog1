@@ -1,0 +1,8 @@
+# 换行符策略。
+#
+# 这个仓库在 Windows 上开发（core.autocrlf=true），git 会把工作区文件签出成 CRLF。
+# Python / HTML / CSS / JS 带 CRLF 都不影响运行，但 shell 脚本会炸得很隐蔽：
+# `set -euo pipefail\r` 里的 \r 会被当成选项名的一部分，bash 报
+# 「set: pipefail: invalid option name」，脚本直接起不来（部署时踩过一次）。
+# 所以这里强制脚本类文件在仓库与工作区都用 LF。
+*.sh text eol=lf
