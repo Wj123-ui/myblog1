@@ -481,11 +481,12 @@ def build():
     body_html = render_liquid(body, ctx)
     write(os.path.join(SITE_DIR, 'index.html'), render_page(pm, body_html))
 
-    # ---- 归档 / 项目 / 关于 / 下载 / 图片测试 ----
+    # ---- 归档 / 项目 / 关于 / 下载 ----
+    # 注：images-test.md 是当初调图片样式的开发用页面，不对外发布，
+    # 因此既不生成到 _site，也不进 sitemap。源文件保留备用。
     for name, fname in [
         ('archive', 'archive.md'), ('projects', 'projects.md'),
         ('about', 'about.md'), ('downloads', 'downloads.md'),
-        ('images-test', 'images-test.md'),
     ]:
         m2, b2 = split_frontmatter(read(os.path.join(ROOT, fname)))
         url = '/%s/' % name
@@ -525,7 +526,6 @@ def write_sitemap_and_robots():
         ('/projects.html', SITE['time'], '0.7'),
         ('/downloads.html', SITE['time'], '0.7'),
         ('/about.html', SITE['time'], '0.6'),
-        ('/images-test.html', SITE['time'], '0.2'),
     ]
     for p in SITE['posts']:
         pages.append(('/posts/%s.html' % p['slug'], p['date'] or SITE['time'], '0.8'))

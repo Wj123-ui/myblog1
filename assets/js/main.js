@@ -258,7 +258,14 @@ function createSkillMap(containerId, config) {
     if (state.hovered) updateTooltip();
   });
 
-  (function loop() {
+  // 只在「页面上可见 且 标签页在前台」时跑帧。
+  // 词云滚出视口后仍在每帧重绘是白烧 CPU，这里两个条件都满足才继续。
+  var rafId = 0;
+  var running = false;
+  var onScreen = true;
+  var pageVisible = !document.hidden;
+
+  function frame() {
     if (!reduced) state.time += 0.016;
     draw();
     // 词会缓慢漂移：每帧用当前坐标重新命中，避免词漂走后卡片闪烁
@@ -269,8 +276,41 @@ function createSkillMap(containerId, config) {
         updateTooltip();
       }
     }
-    requestAnimationFrame(loop);
-  })();
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (running) return;
+    running = true;
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function stop() {
+    running = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+
+  function sync() {
+    if (onScreen && pageVisible) start();
+    else stop();
+  }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(entries) {
+      onScreen = entries[0].isIntersecting;
+      sync();
+    }, { rootMargin: '150px' }).observe(container);
+  } else {
+    onScreen = true;
+  }
+
+  document.addEventListener('visibilitychange', function() {
+    pageVisible = !document.hidden;
+    sync();
+  });
+
+  sync();
 }
 
 // ===== 核心技术领域（三大方向 + 技术点）=====

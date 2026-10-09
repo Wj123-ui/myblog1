@@ -7,6 +7,7 @@
   python deploy.py --no-build     # 跳过构建，直接上传 _site
   python deploy.py --setup        # 额外执行服务器初始化（装 nginx、装站点配置）
   python deploy.py --files        # 一并部署文件分享服务（app.py + systemd + nginx 配置）
+  python deploy.py --prune        # 删除远端已下线的旧文件（本地构建里不存在的）
   python deploy.py --smoke        # 上传后跑一轮 HTTP 冒烟检查
 
 凭据与目标地址从下列位置读取，优先级：环境变量 > .deploy.env（仓库根，已 gitignore）。
@@ -129,6 +130,37 @@ def build(cfg):
                    cwd=ROOT, env=env, check=True)
 
 
+def prune(client, cfg):
+    """删除远端站点目录里本地构建已不存在的文件。
+
+    上传只做单向覆盖，所以删掉一个页面后远端旧文件会一直留着并且仍可访问
+    （例如已下线的 images-test.html，还会被搜索引擎继续抓到）。
+    这里列出远端多出来的文件并逐个删除。
+    """
+    remote_root = cfg['DEPLOY_REMOTE_DIR']
+    print('==> 清理远端多余文件')
+
+    local = set()
+    for root, _dirs, files in os.walk(SITE_DIR):
+        rel = os.path.relpath(root, SITE_DIR).replace('\\', '/')
+        for name in files:
+            local.add(name if rel == '.' else posixpath.join(rel, name))
+
+    out = run(client, "cd %s && find . -type f | sed 's|^\\./||'" % remote_root, quiet=True)
+    remote = [line.strip() for line in out.splitlines() if line.strip()]
+    stale = sorted(p for p in remote if p not in local)
+
+    if not stale:
+        print('  远端没有多余文件')
+        return
+
+    for path in stale:
+        print('  删除 %s' % path)
+    # 路径来自远端 find 的输出，逐个单引号包裹，避免空格或特殊字符被 shell 解释
+    quoted = ' '.join("'%s'" % p.replace("'", "'\\''") for p in stale)
+    run(client, 'cd %s && rm -f -- %s' % (remote_root, quoted))
+
+
 def smoke(client, cfg, paths):
     """在服务器本机逐个 curl，确认 nginx 真的能把每个路径服务出来。"""
     print('==> 冒烟检查（服务器本机 127.0.0.1）')
@@ -205,6 +237,9 @@ def main():
 
         if '--files' in args:
             deploy_files_service(client, cfg, setup='--setup' in args)
+
+        if '--prune' in args:
+            prune(client, cfg)
 
         if '--smoke' in args:
             smoke(client, cfg, ['/', 'archive.html', 'projects.html', 'about.html',

@@ -8,9 +8,12 @@
   {% seo %}
   {% feed_meta %}
   
-  <!-- minima 主题样式（由 _sass/minima/custom-variables.scss 覆写为深色中性配色） -->
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-  <!-- 站点设计系统（MiMo 风格：浅色暖底 + 小米橙点缀） -->
+  <!-- 全站样式统一由 custom.css 管理。
+       这里原本还有一行 minima 主题的 style.css：它只在 GitHub Pages 上由 Jekyll
+       编译 assets/css/style.scss 生成，自建服务器这条构建路径不产出该文件，
+       导致每个页面都发一次 404 请求。既然站点所有可见样式（含文章正文内的
+       表格、引用、代码块）都已由 custom.css 覆盖，就不加载它了，
+       两条构建路径的产物因此完全一致。 -->
   <link rel="stylesheet" href="{{ '/assets/css/custom.css?v=6' | relative_url }}">
   
   <!-- Favicon -->

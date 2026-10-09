@@ -14,7 +14,7 @@
   --bg-subtle: #f2f0ec;
   --text: #202124;
   --text-secondary: #646a73;
-  --text-muted: #9aa0a6;
+  --text-muted: #6b6f75;      /* 比 #9aa0a6 深一档：后者在暖底上只有 2.43:1，达不到 WCAG AA 的 4.5:1 */
   --border: #e8e6e1;
   --border-strong: #d0cec7;
   --ink: #000000;

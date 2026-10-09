@@ -252,9 +252,26 @@
     }, 180);
   });
 
+  // 滚出视口就停帧：黑洞在首屏，但你往下读文章时它早已不可见，
+  // 继续每帧重绘整片吸积盘纯属浪费 CPU 与电量。
+  var onScreen = true;
+  var pageVisible = !document.hidden;
+
+  function sync() {
+    if (onScreen && pageVisible) start();
+    else stop();
+  }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      onScreen = entries[0].isIntersecting;
+      sync();
+    }, { rootMargin: '150px' }).observe(canvas);
+  }
+
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden) stop();
-    else start();
+    pageVisible = !document.hidden;
+    sync();
   });
 
   if (!reduceMotion) {
@@ -276,5 +293,5 @@
   buildParticles();
   resize();
   render();                  // 先同步画好静帧
-  start();                   // 减少动效偏好下内部直接返回，画面保持静帧
+  sync();                    // 可见才跑动画；减少动效偏好下画面保持静帧
 })();
