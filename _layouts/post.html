@@ -1,5 +1,9 @@
 ---
 layout: default
+# 文章页独有的阅读增强脚本，由 default.html 末尾遍历 page.scripts 加载。
+# 这样首页、归档等没有文章的页面就不必下载它。
+scripts:
+  - /assets/js/post.js
 ---
 
 <!-- 顶部阅读进度：贴在视口最上沿，宽度由 post.js 按已读比例拉伸 -->

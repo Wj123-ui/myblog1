@@ -360,6 +360,11 @@ def markdown_to_html(md):
         m = re.match(r'^(#{1,6})\s+(.*)$', line)
         if m:
             lvl = len(m.group(1))
+            # 正文标题整体降一级：文章标题本身就是 <h1>（post.html 的 .post-title），
+            # 正文里的 # 再产出 h1 就会出现「一篇 12 个 h1」的情况——屏幕阅读器与
+            # 搜索引擎会把它当成十几个并列的主标题（实测速查手册那篇就是 12 个）。
+            # 降级后正文最高是 h2，与文章页的目录、锚点逻辑（都按 h1–h3 收集）一致。
+            lvl = min(lvl + 1, 6)
             out.append('<h%d>%s</h%d>' % (lvl, _inline(m.group(2)), lvl))
             i += 1
             continue
@@ -472,11 +477,18 @@ def apply_layout(layout_name, content, page_meta):
     if not os.path.isfile(path):
         return content
     meta, body = split_frontmatter(read(path))
-    ctx = {'site': SITE, 'page': page_meta, 'content': content}
+    # 布局自己的 front matter 也要并进 page，否则在布局里声明的键（例如 post.html 的
+    # scripts）传不到模板里——此前只取了 layout，其余键被丢掉，于是文章页的 post.js
+    # 一直没被加载，而页面看起来「正常」（它本来就会自己判断有无文章而退出）。
+    # 页面自身的 front matter 优先，布局只补它没写的键。
+    merged = dict(meta)
+    merged.update(page_meta or {})
+    merged.pop('layout', None)
+    ctx = {'site': SITE, 'page': merged, 'content': content}
     result = render_liquid(body, ctx)
     parent = meta.get('layout')
     if parent and parent != layout_name:
-        result = apply_layout(parent, result, page_meta)
+        result = apply_layout(parent, result, merged)
     return result
 
 def render_page(page_meta, body_html):

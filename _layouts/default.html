@@ -39,11 +39,16 @@
 
   <!-- 自定义光标（仅桌面鼠标设备，由 main.js 动态创建） -->
   <script src="{{ '/assets/js/main.js?v=2' | relative_url }}" defer></script>
-  <!-- 首页黑洞动画（只在存在 .hero-visual canvas 的页面生效） -->
+  <!-- 首页黑洞动画（只在存在 .hero-visual canvas 的页面生效，其他页会自行退出） -->
   <script src="{{ '/assets/js/blackhole.js?v=1' | relative_url }}" defer></script>
   <!-- 页眉轮换名言 / 古诗词 -->
   <script src="{{ '/assets/js/quote.js?v=1' | relative_url }}" defer></script>
-  <!-- 文章页阅读增强（目录 / 锚点 / 阅读时长 / 进度条）；非文章页自动跳过 -->
-  <script src="{{ '/assets/js/post.js?v=1' | relative_url }}" defer></script>
+  <!-- 文章页阅读增强（目录 / 锚点 / 阅读时长 / 进度条）只在文章页加载：
+       它虽然会自己判断「没有 .post 就退出」，但首页、归档等页面本就没有文章，
+       没必要为此多下一次 7.6KB（压缩后 3.8KB）的请求。
+       由页面在 front matter 里声明 page.scripts 后在此追加。 -->
+  {% for s in page.scripts %}
+  <script src="{{ s | relative_url }}" defer></script>
+  {% endfor %}
 </body>
 </html>
