@@ -43,3 +43,9 @@ exclude:
   - Gemfile.lock
   - README.md
   - vendor
+  # 本地构建与部署脚本：只在本机使用，不需要发布到 GitHub Pages
+  - build_preview.py
+  - deploy.py
+  - deploy/
+  - .deploy.env
+  - .deploy.example.env

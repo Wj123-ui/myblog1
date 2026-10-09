@@ -5,7 +5,7 @@
 本地预览时忽略 baseurl，链接使用相对路径，file:// 或 http://localhost 均可浏览。
 用法：python build_preview.py   （产物在 _site/ 目录）
 """
-import re, os, io, datetime, html as HTML
+import re, os, io, shutil, hashlib, datetime, html as HTML
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE_DIR = os.path.join(ROOT, '_site')
@@ -13,10 +13,14 @@ SITE_DIR = os.path.join(ROOT, '_site')
 # ---------------- site 配置（本地预览用，baseurl 留空） ----------------
 SITE = {
     'title': '电气自动化与嵌入式开发',
+    'description': '一个基于 Jekyll 和 GitHub Pages 搭建的个人博客，'
+                   '记录电气自动化、嵌入式系统、单片机开发、PLC 编程与硬件设计的学习与实践。',
     'email': '2594538837@qq.com',
     'github_username': 'Wj123-ui',
     'baseurl': '',
-    'url': '',
+    # 部署到自有服务器时用环境变量 SITE_URL 指定站点根地址（如 http://121.196.246.16），
+    # 留空则本地预览不输出 canonical / og:url。
+    'url': os.environ.get('SITE_URL', '').rstrip('/'),
     'lang': 'zh-CN',
     'time': datetime.datetime.now(),
     'posts': [],
@@ -28,10 +32,31 @@ def read(path):
     with io.open(path, encoding='utf-8') as f:
         return f.read()
 
+# ---- 静态资源版本号 ----
+# 模板里写的是 ?v=6 这类手写版本号，忘记改就会让回访用户一直用旧缓存。
+# 这里按文件内容算短 hash 自动替换，内容一变版本就变，缓存自然失效。
+
+_ASSET_VER_RE = re.compile(r'(/assets/(?:css|js)/[A-Za-z0-9_.-]+)\?v=[^"\'\s>]*')
+
+def asset_version(rel_path):
+    path = os.path.join(ROOT, rel_path.replace('/', os.sep))
+    if not os.path.isfile(path):
+        return None
+    with io.open(path, 'rb') as f:
+        return hashlib.sha256(f.read()).hexdigest()[:8]
+
+def stamp_assets(text):
+    def repl(m):
+        digest = asset_version(m.group(1).lstrip('/'))
+        return m.group(1) + ('?v=' + digest if digest else '')
+    return _ASSET_VER_RE.sub(repl, text)
+
 def write(path, text):
     d = os.path.dirname(path)
     if not os.path.isdir(d):
         os.makedirs(d)
+    if path.endswith('.html'):
+        text = stamp_assets(text)
     with io.open(path, 'w', encoding='utf-8', newline='\n') as f:
         f.write(text)
 
@@ -52,11 +77,51 @@ def local_path(p):
     if p == '/':
         return '/index.html'
     p = p.lstrip('/').rstrip('/')
-    if p in ('archive', 'projects', 'about', 'images-test'):
+    if p in ('archive', 'projects', 'about', 'downloads', 'images-test'):
         return '/' + p + '.html'
     if p.endswith('.html'):
         return '/' + p
     return '/' + p
+
+# ---------------- SEO 头（替代 {% seo %}） ----------------
+# GitHub Pages 上由 jekyll-seo-tag 插件注入 <title>/description/og 标签，
+# 自建静态站没有插件，必须自己输出，否则浏览器标签页标题为空。
+
+def seo_head(ctx):
+    site = ctx.get('site') or {}
+    page = ctx.get('page') or {}
+    site_title = site.get('title', '')
+    page_title = (page.get('title') or '').strip()
+    if page_title and page_title != site_title:
+        title = '%s | %s' % (page_title, site_title)
+    else:
+        title = site_title or page_title
+
+    desc = page.get('excerpt') or page.get('description') or site.get('description') or ''
+    desc = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', str(desc))).strip()
+
+    out = ['<title>%s</title>' % HTML.escape(title)]
+    if desc:
+        out.append('<meta name="description" content="%s">' % HTML.escape(desc))
+
+    url = (site.get('url') or '').rstrip('/')
+    if url:
+        base = (site.get('baseurl') or '').strip().strip('/')
+        path = (page.get('path') or '/').strip()
+        if not path.startswith('/'):
+            path = '/' + path
+        canonical = url + ('/' + base if base else '') + path
+        out.append('<link rel="canonical" href="%s">' % HTML.escape(canonical))
+        out.append('<meta property="og:url" content="%s">' % HTML.escape(canonical))
+
+    out.append('<meta property="og:site_name" content="%s">' % HTML.escape(site_title))
+    # og:title 只用页面标题本身，站点名由 og:site_name 单独提供
+    out.append('<meta property="og:title" content="%s">' % HTML.escape(page_title or site_title))
+    if desc:
+        out.append('<meta property="og:description" content="%s">' % HTML.escape(desc))
+    out.append('<meta property="og:type" content="%s">' % ('article' if page.get('date') else 'website'))
+    out.append('<meta name="twitter:card" content="summary">')
+    return '\n  '.join(out)
 
 # ---------------- Liquid 渲染 ----------------
 
@@ -188,7 +253,7 @@ def render_includes(text, ctx):
 
 def render_liquid(text, ctx):
     text = render_includes(text, ctx)
-    text = text.replace('{% seo %}', '').replace('{% feed_meta %}', '')
+    text = text.replace('{% seo %}', seo_head(ctx)).replace('{% feed_meta %}', '')
     text = render_fors(text, ctx)
     text = render_ifs(text, ctx)
     text = render_vars(text, ctx)
@@ -342,13 +407,15 @@ def load_posts():
     posts.sort(key=lambda p: p['date'] or datetime.datetime.min, reverse=True)
     return posts
 
-def page_context(url, title='', meta=None):
+def page_context(url, title='', meta=None, path=None):
     meta = meta or {}
     return {
         'url': url,
+        'path': path or url,
         'title': title,
         'date': meta.get('date'),
         'author': meta.get('author'),
+        'excerpt': meta.get('excerpt'),
         'categories': meta.get('categories', []),
         'tags': meta.get('tags', []),
     }
@@ -375,12 +442,18 @@ def render_post_page(post_meta, body_html):
     return apply_layout('post', body_html, post_meta)
 
 def build():
+    # 清空旧产物，避免上一次构建留下的文件（如 sitemap.xml/robots.txt）混进本次部署
+    if os.path.isdir(SITE_DIR):
+        shutil.rmtree(SITE_DIR)
+    os.makedirs(SITE_DIR)
+
     SITE['posts'] = load_posts()
 
     # 静态资源
     for src, dst in [
         ('assets/css/custom.css', 'assets/css/custom.css'),
         ('assets/js/main.js', 'assets/js/main.js'),
+        ('assets/js/files.js', 'assets/js/files.js'),
         ('favicon.svg', 'favicon.svg'),
     ]:
         write(os.path.join(SITE_DIR, dst), read(os.path.join(ROOT, src)))
@@ -401,26 +474,27 @@ def build():
 
     # ---- 首页 ----
     meta, body = split_frontmatter(read(os.path.join(ROOT, 'index.md')))
-    pm = page_context('/', meta.get('title', ''))
+    pm = page_context('/', meta.get('title', ''), path='/')
     ctx = {'site': SITE, 'page': pm}
     body_html = render_liquid(body, ctx)
     write(os.path.join(SITE_DIR, 'index.html'), render_page(pm, body_html))
 
-    # ---- 归档 / 项目 / 关于 / 404 / 图片测试 ----
+    # ---- 归档 / 项目 / 关于 / 下载 / 图片测试 ----
     for name, fname in [
         ('archive', 'archive.md'), ('projects', 'projects.md'),
-        ('about', 'about.md'), ('images-test', 'images-test.md'),
+        ('about', 'about.md'), ('downloads', 'downloads.md'),
+        ('images-test', 'images-test.md'),
     ]:
         m2, b2 = split_frontmatter(read(os.path.join(ROOT, fname)))
         url = '/%s/' % name
-        pm2 = page_context(url, m2.get('title', ''))
+        pm2 = page_context(url, m2.get('title', ''), path='/%s.html' % name)
         ctx2 = {'site': SITE, 'page': pm2}
         b2_html = render_liquid(b2, ctx2)
         write(os.path.join(SITE_DIR, name + '.html'), render_page(pm2, b2_html))
 
     # ---- 404 ----
     m3, b3 = split_frontmatter(read(os.path.join(ROOT, '404.md')))
-    pm3 = page_context('/404.html', m3.get('title', ''))
+    pm3 = page_context('/404.html', m3.get('title', ''), path='/404.html')
     b3_html = render_liquid(b3, {'site': SITE, 'page': pm3})
     write(os.path.join(SITE_DIR, '404.html'), render_page(pm3, b3_html))
 
@@ -428,11 +502,52 @@ def build():
     for p in SITE['posts']:
         body_md = render_vars(p['body'], {'site': SITE, 'post': p})
         body_html = markdown_to_html(body_md)
-        pmeta = page_context('posts/%s.html' % p['slug'], p['title'], p)
+        pmeta = page_context('posts/%s.html' % p['slug'], p['title'], p,
+                             path='/posts/%s.html' % p['slug'])
         write(os.path.join(SITE_DIR, 'posts', p['slug'] + '.html'),
               render_post_page(pmeta, body_html))
 
+    # ---- sitemap / robots（仅自建服务器构建：有 SITE_URL 时） ----
+    # GitHub Pages 构建由 jekyll-sitemap 插件生成，仓库根目录另有 robots.txt，两者互不干扰。
+    if SITE['url']:
+        write_sitemap_and_robots()
+
     print('构建完成：', SITE_DIR)
+
+def write_sitemap_and_robots():
+    """为自建服务器输出 sitemap.xml 与 robots.txt（robots 里的 Sitemap 地址随 SITE_URL 走）。"""
+    base = SITE['url'].rstrip('/')
+    pages = [
+        ('/', SITE['time'], '1.0'),
+        ('/archive.html', SITE['time'], '0.8'),
+        ('/projects.html', SITE['time'], '0.7'),
+        ('/downloads.html', SITE['time'], '0.7'),
+        ('/about.html', SITE['time'], '0.6'),
+        ('/images-test.html', SITE['time'], '0.2'),
+    ]
+    for p in SITE['posts']:
+        pages.append(('/posts/%s.html' % p['slug'], p['date'] or SITE['time'], '0.8'))
+
+    rows = []
+    for path, lastmod, priority in pages:
+        stamp = lastmod.strftime('%Y-%m-%d') if hasattr(lastmod, 'strftime') else str(lastmod)[:10]
+        rows.append(
+            '  <url>\n'
+            '    <loc>%s%s</loc>\n'
+            '    <lastmod>%s</lastmod>\n'
+            '    <priority>%s</priority>\n'
+            '  </url>' % (base, path, stamp, priority)
+        )
+    write(os.path.join(SITE_DIR, 'sitemap.xml'),
+          '<?xml version="1.0" encoding="UTF-8"?>\n'
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+          + '\n'.join(rows) + '\n</urlset>\n')
+
+    write(os.path.join(SITE_DIR, 'robots.txt'),
+          'User-agent: *\n'
+          'Allow: /\n'
+          '\n'
+          'Sitemap: %s/sitemap.xml\n' % base)
 
 if __name__ == '__main__':
     build()

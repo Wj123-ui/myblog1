@@ -1,0 +1,41 @@
+[Unit]
+Description=myblog file sharing service (upload / download)
+Documentation=https://github.com/Wj123-ui
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=myblog-files
+Group=myblog-files
+WorkingDirectory=/opt/myblog-files
+EnvironmentFile=/etc/myblog-files.env
+ExecStart=/usr/bin/python3 /opt/myblog-files/app.py
+
+Restart=always
+RestartSec=3
+TimeoutStopSec=15
+
+# ---- 沙箱：只允许写数据目录，其余文件系统只读 ----
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallArchitectures=native
+ReadWritePaths=/var/lib/myblog-files
+
+[Install]
+WantedBy=multi-user.target

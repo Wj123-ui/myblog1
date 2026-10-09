@@ -8,3 +8,10 @@ Gemfile.lock
 
 # Windows 系统文件
 nul
+
+# 部署凭据（服务器地址/账号/密码），绝不提交
+.deploy.env
+
+# 工具产物
+.mimosa/
+__pycache__/

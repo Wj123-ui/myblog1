@@ -1426,6 +1426,332 @@ body.custom-cursor * {
   }
 }
 
+/* ---------- 文件分享页 ---------- */
+
+.files-page .panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.files-page .panel-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.panel-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.panel-toggle,
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition);
+}
+
+.panel-toggle:hover,
+.link-button:hover {
+  color: var(--ink);
+}
+
+.files-panel,
+.upload-panel,
+.admin-panel {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin: 22px 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.files-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.files-toolbar input[type="search"] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.files-toolbar select {
+  flex: 0 0 auto;
+  max-width: 40%;
+}
+
+.files-toolbar input,
+.files-toolbar select,
+.field input[type="text"],
+.field select {
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition);
+}
+
+.files-toolbar input:focus-visible,
+.files-toolbar select:focus-visible,
+.field input[type="text"]:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.files-status {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.files-status.is-error {
+  color: #b3261e;
+}
+
+.files-status.is-ok {
+  color: #1a7f37;
+}
+
+.files-status.is-empty {
+  color: var(--text-muted);
+}
+
+.files-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.file-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+
+.file-item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.file-main {
+  min-width: 0;
+}
+
+.file-name {
+  display: inline-block;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  word-break: break-all;
+  transition: color var(--transition);
+}
+
+.file-name:hover {
+  color: var(--accent);
+}
+
+.file-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.file-note {
+  margin: 7px 0 0;
+  font-size: 0.87rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.file-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.file-download {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-ghost.is-danger {
+  color: #b3261e;
+}
+
+.files-more {
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* 上传表单 */
+
+.upload-panel .panel-body {
+  margin-top: 4px;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.field input[type="text"],
+.field select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.field-row {
+  display: flex;
+  gap: 14px;
+}
+
+.field-row .field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.field-hint {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drop-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 76px;
+  padding: 16px;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.drop-zone:hover,
+.drop-zone:focus-visible {
+  border-color: var(--text-secondary);
+  outline: none;
+}
+
+.drop-zone.is-over {
+  border-color: var(--ink);
+  background: var(--bg-elevated);
+}
+
+.upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.upload-hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.upload-hint.is-error {
+  color: #b3261e;
+}
+
+.upload-hint.is-ok {
+  color: #1a7f37;
+}
+
+.progress {
+  height: 4px;
+  margin-top: 14px;
+  background: var(--bg-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 0;
+  height: 100%;
+  background: var(--ink);
+  transition: width 120ms linear;
+}
+
+.files-footnote {
+  margin: 26px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .files-panel,
+  .upload-panel,
+  .admin-panel {
+    padding: 18px 16px;
+  }
+
+  .files-toolbar,
+  .field-row {
+    flex-direction: column;
+  }
+
+  .files-toolbar select {
+    max-width: none;
+  }
+
+  .file-item {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
 /* ---------- 减少动效偏好 ---------- */
 
 @media (prefers-reduced-motion: reduce) {

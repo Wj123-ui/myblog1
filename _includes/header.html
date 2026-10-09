@@ -14,6 +14,7 @@
         <li><a href="{{ '/' | relative_url }}" class="nav-link" {% if page.url == '/' or page.url == '/index.html' %}aria-current="page"{% endif %}>首页</a></li>
         <li><a href="{{ '/archive' | relative_url }}" class="nav-link" {% if page.url contains '/archive' %}aria-current="page"{% endif %}>归档</a></li>
         <li><a href="{{ '/projects' | relative_url }}" class="nav-link" {% if page.url contains '/projects' %}aria-current="page"{% endif %}>项目</a></li>
+        <li><a href="{{ '/downloads' | relative_url }}" class="nav-link" {% if page.url contains '/downloads' %}aria-current="page"{% endif %}>下载</a></li>
         <li><a href="{{ '/about' | relative_url }}" class="nav-link" {% if page.url contains '/about' %}aria-current="page"{% endif %}>关于</a></li>
         <li>
           <a href="{{ site.github_username | prepend: 'https://github.com/' }}" class="nav-link" target="_blank" rel="noopener" aria-label="GitHub（新窗口打开）">
@@ -40,6 +41,7 @@
       <li><a href="{{ '/' | relative_url }}" class="mobile-nav-link">首页</a></li>
       <li><a href="{{ '/archive' | relative_url }}" class="mobile-nav-link">归档</a></li>
       <li><a href="{{ '/projects' | relative_url }}" class="mobile-nav-link">项目</a></li>
+      <li><a href="{{ '/downloads' | relative_url }}" class="mobile-nav-link">下载</a></li>
       <li><a href="{{ '/about' | relative_url }}" class="mobile-nav-link">关于</a></li>
       <li><a href="{{ site.github_username | prepend: 'https://github.com/' }}" class="mobile-nav-link" target="_blank" rel="noopener">GitHub</a></li>
     </ul>
