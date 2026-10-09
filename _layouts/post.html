@@ -2,6 +2,11 @@
 layout: default
 ---
 
+<!-- 顶部阅读进度：贴在视口最上沿，宽度由 post.js 按已读比例拉伸 -->
+<div class="reading-progress" aria-hidden="true">
+  <span class="reading-progress-bar" id="reading-progress"></span>
+</div>
+
 <article class="post">
   <header class="post-header">
     <h1 class="post-title">{{ page.title }}</h1>
@@ -10,6 +15,8 @@ layout: default
       <time class="post-date" datetime="{{ page.date | date_to_xmlschema }}">
         {{ page.date | date: "%Y-%m-%d" }}
       </time>
+      <!-- 阅读时长由 post.js 估算后填入 -->
+      <span class="post-reading-time" id="post-reading-time" hidden></span>
 
       {% if page.author %}
         <span class="post-author">{{ page.author }}</span>
@@ -33,9 +40,38 @@ layout: default
     {% endif %}
   </header>
 
+  <!-- 目录：由 post.js 依据正文 h2/h3 生成；标题不足 3 个时保持隐藏，
+       所以默认 hidden，脚本填充后才显示。 -->
+  <nav class="post-toc" id="post-toc" aria-label="本文目录" hidden>
+    <p class="post-toc-title">本文目录</p>
+  </nav>
+
   <div class="post-content">
     {{ content }}
   </div>
+
+  <!-- 上一篇 / 下一篇：变量名与 Jekyll 原生一致，两条构建路径共用这份模板 -->
+  {% if page.previous or page.next %}
+  <nav class="post-nav" aria-label="相邻文章">
+    {% if page.previous %}
+      <a class="post-nav-item" href="{{ page.previous.url | relative_url }}">
+        <span class="post-nav-label">← 上一篇</span>
+        <span class="post-nav-title">{{ page.previous.title }}</span>
+      </a>
+    {% else %}
+      <span class="post-nav-item post-nav-item--empty" aria-hidden="true"></span>
+    {% endif %}
+
+    {% if page.next %}
+      <a class="post-nav-item post-nav-item--next" href="{{ page.next.url | relative_url }}">
+        <span class="post-nav-label">下一篇 →</span>
+        <span class="post-nav-title">{{ page.next.title }}</span>
+      </a>
+    {% else %}
+      <span class="post-nav-item post-nav-item--empty" aria-hidden="true"></span>
+    {% endif %}
+  </nav>
+  {% endif %}
 
   <footer class="post-footer">
     <div class="post-footer-inner">
@@ -64,3 +100,11 @@ layout: default
     <noscript><p class="comments-noscript">评论功能需要启用 JavaScript。</p></noscript>
   </section>
 </article>
+
+<!-- 回到顶部：滚动超过一屏后由 post.js 加 is-visible 才出现 -->
+<button type="button" class="back-to-top" id="back-to-top" aria-label="回到顶部">
+  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor"
+       stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M8 13V3M4 7l4-4 4 4"/>
+  </svg>
+</button>

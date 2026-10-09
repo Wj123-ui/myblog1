@@ -205,19 +205,49 @@ def eval_cond(cond, ctx):
     # 存在性判断
     return bool(resolve(cond, ctx))
 
+_IF_TOKEN = re.compile(r'\{%\s*(if\s+[^%]+?|else|endif)\s*%\}', re.DOTALL)
+
 def render_ifs(text, ctx):
-    # 先处理带 else 的
-    def repl_else(m):
-        cond, a, b = m.group(1), m.group(2), m.group(3)
-        return a if eval_cond(cond, ctx) else b
-    text = re.sub(r'\{%\s*if\s+(.+?)\s*%\}(.*?)\{%\s*else\s*%\}(.*?)\{%\s*endif\s*%\}',
-                  repl_else, text, flags=re.DOTALL)
-    def repl(m):
-        cond, a = m.group(1), m.group(2)
-        return a if eval_cond(cond, ctx) else ''
-    text = re.sub(r'\{%\s*if\s+(.+?)\s*%\}(.*?)\{%\s*endif\s*%\}',
-                  repl, text, flags=re.DOTALL)
-    return text
+    """渲染 {% if %} / {% else %} / {% endif %}，支持嵌套。
+
+    这里曾经用两条非贪婪正则实现，遇到嵌套时会把「外层 if」和「第一个内层 else」
+    配成一对，于是同一分支被截断、残留的 {% endif %} 还会在下一层布局渲染时
+    和别的 if 错配——实测会把整篇正文吞掉。现在改成按 token 扫描、用栈按深度配对：
+    每层记录「是否已有分支命中」和「当前分支是否输出」，只有栈上每层都输出才落文本。
+    """
+    tokens = list(_IF_TOKEN.finditer(text))
+    if not tokens:
+        return text
+
+    out = []
+    pos = 0
+    stack = []          # 每层: {'taken': 是否已有分支命中, 'emit': 当前分支是否输出}
+
+    def emitting():
+        return all(frame['emit'] for frame in stack)
+
+    for m in tokens:
+        chunk = text[pos:m.start()]
+        if emitting():
+            out.append(chunk)
+        pos = m.end()
+
+        token = m.group(1).strip()
+        if token.startswith('if '):
+            hit = bool(eval_cond(token[3:], ctx))
+            stack.append({'taken': hit, 'emit': hit})
+        elif token == 'else':
+            if stack:
+                frame = stack[-1]
+                frame['emit'] = not frame['taken']
+                frame['taken'] = True
+        else:                       # endif
+            if stack:
+                stack.pop()
+
+    # 结尾一律保留：模板写错时宁可露出未闭合的标签，也不要静默丢内容
+    out.append(text[pos:])
+    return ''.join(out)
 
 def render_fors(text, ctx):
     # 先匹配最内层 for（body 不含嵌套 {% for %}），处理后再向外层推进
@@ -418,7 +448,23 @@ def page_context(url, title='', meta=None, path=None):
         'excerpt': meta.get('excerpt'),
         'categories': meta.get('categories', []),
         'tags': meta.get('tags', []),
+        # 相邻文章，键名与 Jekyll 原生一致，好让 post.html 两条构建路径共用。
+        # previous = 更早发布，next = 更晚发布（与站内「上一篇/下一篇」的惯例一致）
+        'previous': meta.get('previous'),
+        'next': meta.get('next'),
     }
+
+def neighbour_of(posts, index):
+    """返回 (previous, next)：previous 是更早的文章，next 是更晚的文章。
+
+    posts 按时间倒序排列（最新的在前），因此更早的在后面、更晚的在前面。
+    边界上没有相邻文章时给 None，模板据此留空占位，避免按钮跳到不存在的页。
+    """
+    older = posts[index + 1] if index + 1 < len(posts) else None
+    newer = posts[index - 1] if index > 0 else None
+    def brief(p):
+        return {'url': p['url'], 'title': p['title']} if p else None
+    return brief(older), brief(newer)
 
 def apply_layout(layout_name, content, page_meta):
     """套用布局，支持 front matter 里的 layout: 父布局 递归继承。"""
@@ -456,6 +502,7 @@ def build():
         ('assets/js/files.js', 'assets/js/files.js'),
         ('assets/js/blackhole.js', 'assets/js/blackhole.js'),
         ('assets/js/quote.js', 'assets/js/quote.js'),
+        ('assets/js/post.js', 'assets/js/post.js'),
         ('favicon.svg', 'favicon.svg'),
     ]:
         write(os.path.join(SITE_DIR, dst), read(os.path.join(ROOT, src)))
@@ -502,11 +549,14 @@ def build():
     write(os.path.join(SITE_DIR, '404.html'), render_page(pm3, b3_html))
 
     # ---- 文章页 ----
-    for p in SITE['posts']:
+    for index, p in enumerate(SITE['posts']):
         body_md = render_vars(p['body'], {'site': SITE, 'post': p})
         body_html = markdown_to_html(body_md)
+        prev_post, next_post = neighbour_of(SITE['posts'], index)
         pmeta = page_context('posts/%s.html' % p['slug'], p['title'], p,
                              path='/posts/%s.html' % p['slug'])
+        pmeta['previous'] = prev_post
+        pmeta['next'] = next_post
         write(os.path.join(SITE_DIR, 'posts', p['slug'] + '.html'),
               render_post_page(pmeta, body_html))
 

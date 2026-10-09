@@ -1379,6 +1379,230 @@ body.custom-cursor * {
   color: var(--text-muted);
 }
 
+/* ---------- 文章页阅读增强 ---------- */
+
+/* 正文标题要留出吸顶导航的高度，否则点目录跳过去会被导航栏盖住。
+   参照站（MDN）这一项是 0，因为它导航栏不吸顶；我们的吸顶，
+   所以必须补 60px 头部 + 余量。 */
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+  scroll-margin-top: calc(var(--header-height) + 18px);
+}
+
+/* 标题尾部的锚点链接：平时隐形，悬停标题或聚焦时才出现 */
+.heading-anchor {
+  margin-left: 8px;
+  font-weight: 400;
+  color: var(--border-strong);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--transition), color var(--transition);
+}
+
+.post-content h1:hover .heading-anchor,
+.post-content h2:hover .heading-anchor,
+.post-content h3:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.heading-anchor:hover {
+  color: var(--accent);
+}
+
+.post-reading-time {
+  color: var(--text-muted);
+}
+
+/* 目录 */
+.post-toc {
+  margin: 0 0 32px;
+  padding: 20px 22px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.post-toc-title {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.post-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* 条目多时双栏排布，避免 19 节的速查手册把目录拉成一长条 */
+  columns: 1;
+  column-gap: 28px;
+}
+
+.post-toc-list--split {
+  columns: 2;
+}
+
+/* 30 节以上的速查手册：三栏才不至于把目录拉成一长条 */
+.post-toc-list--wide {
+  columns: 3;
+}
+
+.post-toc-item {
+  break-inside: avoid;
+  line-height: 1.6;
+  /* 缩进由脚本写入的 --toc-depth 决定：0 为顶层大节，1 为次级小节 */
+  padding-left: calc(var(--toc-depth, 0) * 16px);
+}
+
+/* 每列首项贴顶，避免跨列时多出一行空档 */
+.post-toc-item:first-child {
+  margin-top: 0;
+}
+
+.post-toc-item--sub > .post-toc-link {
+  color: var(--text-muted);
+}
+
+.post-toc-item--sub > .post-toc-link:hover,
+.post-toc-item--sub > .post-toc-link[aria-current="true"] {
+  color: var(--ink);
+}
+
+.post-toc-link {
+  display: block;
+  padding: 3px 0 3px 10px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  /* 左侧留一条常驻透明边框，高亮时只换颜色，不产生位移 */
+  border-left: 2px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.post-toc-link:hover {
+  color: var(--ink);
+  border-left-color: var(--border-strong);
+}
+
+.post-toc-link[aria-current="true"] {
+  color: var(--ink);
+  font-weight: 550;
+  border-left-color: var(--accent);
+}
+
+/* 顶部阅读进度条 */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 200;              /* 压在吸顶导航之上 */
+  pointer-events: none;
+}
+
+.reading-progress-bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* 上一篇 / 下一篇 */
+.post-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 40px 0 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+
+.post-nav-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.post-nav-item:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-subtle);
+}
+
+.post-nav-item--next {
+  text-align: right;
+}
+
+.post-nav-item--empty {
+  border-color: transparent;
+  pointer-events: none;
+}
+
+.post-nav-label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.post-nav-title {
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--text);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 回到顶部 */
+.back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 150;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity var(--transition), transform var(--transition),
+              visibility var(--transition), color var(--transition);
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  color: var(--ink);
+  border-color: var(--border-strong);
+}
+
 /* ---------- 响应式 ---------- */
 
 @media (max-width: 760px) {
@@ -1392,6 +1616,27 @@ body.custom-cursor * {
   /* 窄屏页眉只剩站标和汉堡按钮，放不下句子，直接隐藏 */
   .site-quote {
     display: none;
+  }
+
+  /* 长文辅助元素在窄屏收一收 */
+  .post-toc-list--split,
+  .post-toc-list--wide {
+    columns: 1;
+  }
+
+  .post-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .post-nav-item--next {
+    text-align: left;
+  }
+
+  .back-to-top {
+    right: 16px;
+    bottom: 16px;
+    width: 36px;
+    height: 36px;
   }
 
   #cursor-follower,
