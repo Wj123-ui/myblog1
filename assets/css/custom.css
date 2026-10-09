@@ -31,7 +31,9 @@
     Consolas, "Liberation Mono", monospace;
 
   /* 尺寸 */
-  --max-width: 840px;
+  /* 站点容器宽度：页眉是全出血的，840px 的正文在宽屏上两侧空太多、和页眉不成比例。
+     文章正文有 .post 自己的 760px 上限、404 有 580px，都不受这里影响。 */
+  --max-width: 1200px;
   --header-height: 60px;
   --radius: 14px;
   --radius-sm: 8px;
