@@ -397,34 +397,10 @@ body.custom-cursor * {
 }
 
 /* ---------- 首页 Hero ---------- */
+/* 首屏不再有标题/副标题文字，直接从按钮与标签开始，所以顶部留白收窄 */
 
 .hero-section {
-  padding: 72px 0 56px;
-}
-
-.hero-kicker {
-  margin: 0 0 18px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  color: var(--text-muted);
-  text-transform: uppercase;
-}
-
-.hero-title {
-  margin: 0 0 18px;
-  font-size: clamp(34px, 6vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-
-.hero-subtitle {
-  margin: 0 0 30px;
-  max-width: 600px;
-  font-size: 17px;
-  color: var(--text-secondary);
-  line-height: 1.7;
+  padding: 44px 0 56px;
 }
 
 .hero-badges {
@@ -1370,7 +1346,7 @@ body.custom-cursor * {
   }
 
   .hero-section {
-    padding: 48px 0 40px;
+    padding: 32px 0 40px;
   }
 
   .features-grid,

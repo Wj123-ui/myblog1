@@ -3,12 +3,8 @@ layout: default
 ---
 
 <div class="hero-section">
-  <p class="hero-kicker">Embedded Systems · Industrial Automation · Hardware</p>
-  <h1 class="hero-title">电气自动化与嵌入式开发</h1>
-  <p class="hero-subtitle">
-    玩转单片机，折腾 PLC，记录硬件与代码的碰撞。
-    这里是我的学习历程、项目实战踩坑经验与硬件设计笔记。
-  </p>
+  <!-- 视觉上不显示主标题，但保留给屏幕阅读器与搜索引擎 -->
+  <h1 class="visually-hidden">电气自动化与嵌入式开发</h1>
   <div class="hero-actions">
     <a href="{{ '/archive/' | relative_url }}" class="btn-primary">
       查看最新文章
