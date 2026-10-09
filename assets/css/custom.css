@@ -1378,6 +1378,12 @@ body.custom-cursor * {
   font-size: 14px;
   color: var(--text-muted);
 }
+/* giscus 评论框上方的一句中文说明（utterances 那套没有这句） */
+.comments-hint {
+  margin: 0 0 18px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
 
 /* ---------- 文章页阅读增强 ---------- */
 
