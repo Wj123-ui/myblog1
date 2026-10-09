@@ -29,6 +29,10 @@ layout: default
     <span class="badge">硬件设计</span>
     <span class="badge">技术分享</span>
   </div>
+
+  <div class="hero-visual">
+    <canvas aria-hidden="true"></canvas>
+  </div>
 </div>
 
 <div class="about-section">

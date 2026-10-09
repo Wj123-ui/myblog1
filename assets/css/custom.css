@@ -465,6 +465,20 @@ body.custom-cursor * {
   margin-top: 26px;
 }
 
+/* 首页点阵蝴蝶：canvas 由 butterfly.js 绘制，这里只负责尺寸与底板 */
+.hero-visual {
+  margin-top: 46px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-subtle);
+}
+
+.hero-visual canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
 /* 通用小芯片标签 */
 .badge,
 .skill-tag {
