@@ -200,8 +200,9 @@ body.custom-cursor * {
 }
 
 .header-container {
-  max-width: var(--max-width);
-  margin: 0 auto;
+  /* 页眉通栏：站标贴视口左缘、导航贴右缘。
+     这里不加 max-width，否则页面在宽屏上会和正文一样被挤到居中的内容列里，
+     站标就离左边缘很远。正文的居中约束由 .wrapper 负责。 */
   padding: 0 24px;
   height: var(--header-height);
   display: flex;
