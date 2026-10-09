@@ -40,7 +40,10 @@
   var WIDTH = 2.0;          // 流线宽度（CSS px）
   var ALPHA_LEVELS = 6;     // 透明度分档：合并成少量路径描边，省掉逐条换样式
 
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 本文件早先会读系统的「减弱动态效果 / 移除动画」并据此保持静帧。已按站点
+  // 主的决定去掉：站内动画不再遵从该设置。若将来要恢复，需同时改回
+  // update() / start() 两处的守卫，以及 main.js、quote.js、post.js 与
+  // custom.css 里对应的地方。
 
   var w = 0, h = 0, dpr = 1, cx = 0, cy = 0, R = 0;
   var parts = [];
@@ -100,7 +103,6 @@
   // ---------- 每帧更新 ----------
 
   function update(dt) {
-    if (reduceMotion) return;
     for (var i = 0; i < parts.length; i++) {
       var p = parts[i];
       var omega = SPEED * Math.pow(0.24 / p.r, 1.5);
@@ -229,7 +231,7 @@
   }
 
   function start() {
-    if (running || reduceMotion) return;
+    if (running) return;
     running = true;
     lastTs = 0;
     raf = requestAnimationFrame(loop);
@@ -274,24 +276,22 @@
     sync();
   });
 
-  if (!reduceMotion) {
-    canvas.addEventListener('pointermove', function (e) {
-      var rect = canvas.getBoundingClientRect();
-      var mx = e.clientX - rect.left - cx;
-      var my = e.clientY - rect.top - cy;
-      // 限制在几个像素内，只做轻微的呼吸感，不做大幅位移
-      pointer.tx = Math.max(-9, Math.min(9, mx * 0.03));
-      pointer.ty = Math.max(-6, Math.min(6, my * 0.03));
-    });
-    canvas.addEventListener('pointerleave', function () {
-      pointer.tx = 0;
-      pointer.ty = 0;
-    });
-  }
+  canvas.addEventListener('pointermove', function (e) {
+    var rect = canvas.getBoundingClientRect();
+    var mx = e.clientX - rect.left - cx;
+    var my = e.clientY - rect.top - cy;
+    // 限制在几个像素内，只做轻微的呼吸感，不做大幅位移
+    pointer.tx = Math.max(-9, Math.min(9, mx * 0.03));
+    pointer.ty = Math.max(-6, Math.min(6, my * 0.03));
+  });
+  canvas.addEventListener('pointerleave', function () {
+    pointer.tx = 0;
+    pointer.ty = 0;
+  });
 
   buildBuckets();
   buildParticles();
   resize();
   render();                  // 先同步画好静帧
-  sync();                    // 可见才跑动画；减少动效偏好下画面保持静帧
+  sync();                    // 可见才跑动画，滚出视口就停帧省电
 })();

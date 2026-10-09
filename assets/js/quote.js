@@ -32,8 +32,8 @@
   var srcEl = el.querySelector('.site-quote-source');
   if (!textEl || !srcEl) return;
 
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // 随机起点，避免每次进站都从同一条开始
+  // 随机起点，避免每次进站都从同一条开始。
+  // 这里的 Math.random() 只用来挑起始序号，纯展示用途，不参与任何安全判断。
   var i = Math.floor(Math.random() * QUOTES.length);
   var timer = 0;
 
@@ -46,10 +46,6 @@
   function next() {
     if (document.hidden) return;          // 后台标签页不推进，回来时再继续
     i = (i + 1) % QUOTES.length;
-    if (reduceMotion) {
-      show(i);
-      return;
-    }
     el.classList.add('is-fading');
     window.setTimeout(function () {
       show(i);

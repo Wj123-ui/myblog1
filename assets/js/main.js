@@ -1,9 +1,7 @@
 // ===== 自定义光标（MiMo 同款：小实心点 + 描边圆环）=====
 (function() {
-  // 触摸设备不启用
+  // 触摸设备不启用（这是输入方式差异，与动效偏好无关）
   if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
-  // 尊重系统减少动效设置
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   document.body.classList.add('custom-cursor');
 
@@ -85,7 +83,6 @@ function createSkillMap(containerId, config) {
 
   var state = { w: 0, h: 0, mx: -1, my: -1, hovered: null, time: 0 };
   var isMobile = window.matchMedia('(max-width: 760px)').matches;
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // 每次交互前刷新移动端判断（视口可能已变化）
   function refreshViewport() {
@@ -96,7 +93,7 @@ function createSkillMap(containerId, config) {
   function pos(n, w, h, t) {
     var x = n.x * w;
     var y = n.y * h;
-    if (n.id === 'center' || reduced) return { x: x, y: y };
+    if (n.id === 'center') return { x: x, y: y };
     if (state.hovered && state.hovered.id === n.id) return { x: x, y: y };
     var r = n.size === 'large' ? 12 : 8;
     return {
@@ -266,7 +263,7 @@ function createSkillMap(containerId, config) {
   var pageVisible = !document.hidden;
 
   function frame() {
-    if (!reduced) state.time += 0.016;
+    state.time += 0.016;
     draw();
     // 词会缓慢漂移：每帧用当前坐标重新命中，避免词漂走后卡片闪烁
     if (state.mx >= 0 && state.my >= 0) {

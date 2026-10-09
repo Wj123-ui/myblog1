@@ -2020,20 +2020,7 @@ body.custom-cursor * {
 
 /* ---------- 减少动效偏好 ---------- */
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  #cursor-follower,
-  .cursor-ring,
-  .cursor-dot {
-    display: none !important;
-  }
-}
+/* 这里原本有一条 @media (prefers-reduced-motion: reduce) 规则，会把全站过渡与动画
+   压到 0.01ms 并隐藏自定义光标。已按站主的决定整条移除：站内动效不再遵从该设置。
+   对应的 JS 侧改动在 blackhole.js、main.js、quote.js、post.js
+   （各处都去掉了对同一条媒体查询的判断）。将来若要恢复，从这几处一起加回。 */

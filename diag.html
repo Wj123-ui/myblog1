@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>动效诊断</title>
+<style>
+  body { margin: 0; padding: 16px; font: 15px/1.75 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; color: #1a1a1a; background: #f7f6f3; }
+  h1 { font-size: 19px; margin: 0 0 12px; }
+  .alert { padding: 14px 16px; border-radius: 10px; background: #fff; border: 1px solid #e3e0da; margin: 0 0 14px; }
+  .alert.bad { border-color: #e5484d; background: #fff5f5; }
+  .alert.pending { color: #6b6f75; }
+  .alert p { margin: 0 0 8px; }
+  .alert p:last-child { margin-bottom: 0; }
+  .alert ol { margin: 8px 0 0; padding-left: 20px; }
+  .alert li { margin-bottom: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; background: #fff; border: 1px solid #e3e0da; border-radius: 10px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #efede8; }
+  tr:last-child td, tr:last-child th { border-bottom: 0; }
+  th { width: 46%; font-weight: 500; color: #6b6f75; }
+  .big { font-size: 16px; font-weight: 600; }
+  .ok { color: #1a7f37; }
+  .bad { color: #c1121f; }
+  .muted { color: #6b6f75; font-size: 13px; }
+  iframe { width: 390px; max-width: 100%; height: 520px; border: 1px solid #d8d4cd; border-radius: 10px; background: #fff; }
+
+  /* 纯 CSS 探针：不依赖 JavaScript，靠媒体查询把对应的一项显示出来 */
+  .probe-rm, .probe-touch { display: none; }
+  .probe-rm-no, .probe-touch-no { display: inline; }
+  @media (prefers-reduced-motion: reduce) {
+    .probe-rm { display: inline; }
+    .probe-rm-no { display: none; }
+  }
+  @media (hover: none) and (pointer: coarse) {
+    .probe-touch { display: inline; }
+    .probe-touch-no { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>动效诊断</h1>
+
+<noscript>
+  <div class="alert bad">
+    <p class="big">结论：你的浏览器没有执行 JavaScript。</p>
+    <p>站上所有动态效果都由 JavaScript 驱动——首屏黑洞、词云、技能星图、名言轮换。
+       脚本不执行，它们就全部静止，这正是你看到「不动」的直接原因。</p>
+    <p>请依次排查：</p>
+    <ol>
+      <li>浏览器设置里是否关掉了 JavaScript / 脚本；</li>
+      <li>是否开着「无图模式 / 省流模式 / 极速模式」（UC、夸克、QQ 浏览器常见）；</li>
+      <li>是否装了拦截脚本的插件或强力隐私保护，关掉再试；</li>
+      <li>换系统自带浏览器（iPhone 用 Safari，安卓用 Chrome）打开同一网址。</li>
+    </ol>
+  </div>
+</noscript>
+
+<!-- 这一段纯静态：不需要 JavaScript 就会显示，用来确认 HTML/CSS 正常，并用 CSS 媒体查询读出系统设置 -->
+<table>
+  <tr><th>HTML 与 CSS</th><td class="ok">正常（本行能显示即说明）</td></tr>
+  <tr>
+    <th>系统「减弱动态效果 / 移除动画」</th>
+    <td><span class="probe-rm bad big">已开启 —— 这就是动画静止的原因</span><span class="probe-rm-no ok">未开启</span></td>
+  </tr>
+  <tr>
+    <th>触摸设备（hover:none 且 pointer:coarse）</th>
+    <td><span class="probe-touch">是（手机 / 平板）</span><span class="probe-touch-no">否</span></td>
+  </tr>
+</table>
+
+<p class="muted">如果上面这张表显示了，但下面没有出现「脚本检测」表格，就说明 JavaScript 被禁用或被拦截了。</p>
+
+<div id="verdict" class="alert pending">等待脚本检测…</div>
+<table id="rows"></table>
+<iframe id="frame" src="/" referrerpolicy="no-referrer"></iframe>
+
+<script>
+(function () {
+  var out = [], heroChanged;
+  function row(k, v, cls) {
+    out.push('<tr><th>' + k + '</th><td' + (cls ? ' class="' + cls + '"' : '') + '>' + v + '</td></tr>');
+  }
+  function flush() { document.getElementById('rows').innerHTML = out.join(''); }
+
+  var env = { reduce: false, dpr: 1, vw: 0 };
+  try {
+    env.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    env.dpr = window.devicePixelRatio || 1;
+    env.vw = window.innerWidth;
+  } catch (e) {}
+
+  var frames = 0, t0 = 0;
+
+  function fingerprint(c) {
+    try {
+      if (!c || !c.width || !c.height) return 'empty';
+      return c.toDataURL().length + ':' + c.toDataURL().slice(-32);
+    } catch (e) { return 'err:' + e.name; }
+  }
+
+  function step2(heroes) {
+    try {
+      var c = heroes[0], s1 = fingerprint(c);
+      window.setTimeout(function () {
+        try {
+          var s2 = fingerprint(c);
+          row('首页画布数量 / 首个尺寸', heroes.length + ' 个 / ' + c.width + '×' + c.height + ' 设备像素');
+          row('黑洞画布是否已绘制', s1 === 'empty' ? '<b>空白</b>' : '已绘制', s1 === 'empty' ? 'bad' : 'ok');
+          row('黑洞画布 1.2 秒内是否变化', s1 !== s2 ? '在动' : '<b>静止</b>', s1 !== s2 ? 'ok' : 'bad');
+          heroChanged = s1 !== s2;
+        } catch (e) { row('画布检测出错', String(e), 'bad'); }
+        flush();
+        verdict();
+      }, 1200);
+    } catch (e) { row('画布检测出错', String(e), 'bad'); flush(); verdict(); }
+  }
+
+  function finish() {
+    try {
+      var win = null, doc = null;
+      try { win = document.getElementById('frame').contentWindow; doc = win.document; } catch (e) {}
+      var heroes = doc ? doc.querySelectorAll('canvas') : [];
+      row('1 秒内浏览器执行的动画帧数', frames + (frames < 5 ? ' <b>（异常，正常接近 60）</b>' : ''), frames < 5 ? 'bad' : 'ok');
+      row('首页脚本 main.js', doc ? (typeof win.createSkillMap === 'function' ? '已执行' : '<b>未执行</b>') : '未知',
+          doc && typeof win.createSkillMap !== 'function' ? 'bad' : 'ok');
+      row('视口 / 像素比', env.vw + ' px 宽 / DPR ' + env.dpr);
+      flush();
+      if (heroes.length) step2(heroes);
+      else { row('首页画布', '未找到（脚本可能没跑完）', 'bad'); flush(); verdict(); }
+    } catch (e) { row('检测过程出错', String(e), 'bad'); flush(); verdict(); }
+  }
+
+  function verdict() {
+    var el = document.getElementById('verdict');
+    el.className = 'alert';
+    var txt;
+    if (frames < 5) {
+      txt = '结论：iOS/安卓浏览器几乎不执行动画帧。常见于省电模式、或内置浏览器节流，请换系统自带浏览器再试。';
+    } else if (env.reduce) {
+      txt = '结论：系统开启了「减弱动态效果 / 移除动画」，站上动画会因此静止。'
+          + 'iPhone 在「设置 → 辅助功能 → 动态效果」；Android 在「设置 → 无障碍 → 移除动画」。';
+    } else if (heroChanged === true) {
+      txt = '结论：JavaScript、动画帧、画布刷新都正常。请告诉我具体哪个元素不动（黑洞 / 词云 / 技能图 / 菜单动画），我再针对它查。';
+    } else {
+      txt = '结论：脚本能跑，但画布没有刷新，或被拦截在别处。请把本页截图发我。';
+    }
+    el.textContent = txt;
+  }
+
+  function countFrames(ts) {
+    if (!t0) t0 = ts;
+    frames++;
+    if (ts - t0 < 1000) window.requestAnimationFrame(countFrames);
+    else finish();
+  }
+
+  document.getElementById('verdict').textContent = 'JavaScript 已执行，正在检测…';
+  flush();
+  window.requestAnimationFrame(countFrames);
+})();
+</script>
+</body>
+</html>

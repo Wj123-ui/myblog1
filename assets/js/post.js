@@ -155,8 +155,7 @@
 
   if (toTop) {
     toTop.addEventListener('click', function () {
-      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
