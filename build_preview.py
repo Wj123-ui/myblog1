@@ -26,23 +26,6 @@ SITE = {
     'posts': [],
 }
 
-# ---------------- 评论区（giscus） ----------------
-# 原来的 utterances 界面文案硬编码在它的 bundle 里、没有语言开关（已核对它的
-# utterances.html + utterances.js，全库没有 lang/i18n/locale），所以换到支持
-# data-lang 的 giscus。
-#
-# giscus 需要仓库先开启 Discussions 并安装 https://github.com/apps/giscus，
-# 其中的 category-id 只有在开启 Discussions 之后才存在，所以这里留空时模板会
-# 自动回退到原来的 utterances，避免部署出一个报错的评论框。
-# 拿到分类 ID 后填进 category_id，模板即切换为 giscus（界面中文）。
-COMMENTS = {
-    'giscus_repo': 'Wj123-ui/myblog1',
-    # 仓库的 node_id，公开 API 可读：https://api.github.com/repos/Wj123-ui/myblog1
-    'giscus_repo_id': 'R_kgDOSEbDaw',
-    'giscus_category': '',      # 分类名，仅用于注释可读性
-    'giscus_category_id': '',   # 形如 DIC_kwDO...，拿到后填这里即可切换
-}
-
 # ---------------- 工具函数 ----------------
 
 def read(path):
@@ -489,7 +472,7 @@ def apply_layout(layout_name, content, page_meta):
     if not os.path.isfile(path):
         return content
     meta, body = split_frontmatter(read(path))
-    ctx = {'site': SITE, 'page': page_meta, 'content': content, 'comments': COMMENTS}
+    ctx = {'site': SITE, 'page': page_meta, 'content': content}
     result = render_liquid(body, ctx)
     parent = meta.get('layout')
     if parent and parent != layout_name:

@@ -88,28 +88,12 @@ layout: default
 
   <section class="post-comments" aria-label="评论">
     <h2 class="comments-title">评论</h2>
-    <!-- 评论数据都存在 GitHub 上。giscus 与 utterances 二选一：
-         giscus 支持 data-lang=zh-CN（中文界面），utterances 的文案是硬编码的、没有语言开关，
-         所以配好 giscus 的分类 ID 后就切过去。开关在 build_preview.py 的 COMMENTS。 -->
-    {% if comments.giscus_category_id %}
-    <script src="https://giscus.app/client.js"
-            data-repo="{{ comments.giscus_repo }}"
-            data-repo-id="{{ comments.giscus_repo_id }}"
-            data-category="{{ comments.giscus_category }}"
-            data-category-id="{{ comments.giscus_category_id }}"
-            data-mapping="pathname"
-            data-strict="0"
-            data-reactions-enabled="1"
-            data-emit-metadata="0"
-            data-input-position="bottom"
-            data-theme="github-light"
-            data-lang="zh-CN"
-            data-loading="lazy"
-            crossorigin="anonymous"
-            async>
-    </script>
-    <p class="comments-hint">评论由 giscus 提供，用 GitHub 账号登录后即可发表；某篇文章第一次被评论时会自动建对应讨论帖。</p>
-    {% else %}
+    <!-- 基于 GitHub Issues 的评论区（utterances）：
+         需在 https://github.com/apps/utterances 安装该 App 到本仓库后生效。
+         界面是英文的，且改不了——utterances 的文案硬编码在它的 bundle 里，
+         核对过 utterances.html 与 utterances.js，全库不含 lang/i18n/locale 字段。
+         将来若要中文界面只能换实现（giscus 支持 data-lang，但要仓库先开启
+         Discussions 并另装 https://github.com/apps/giscus，两者数据不互通）。 -->
     <script src="https://utteranc.es/client.js"
             repo="Wj123-ui/myblog1"
             issue-term="pathname"
@@ -117,7 +101,6 @@ layout: default
             crossorigin="anonymous"
             async>
     </script>
-    {% endif %}
     <noscript><p class="comments-noscript">评论功能需要启用 JavaScript。</p></noscript>
   </section>
 </article>
