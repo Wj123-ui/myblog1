@@ -1615,9 +1615,17 @@ body.custom-cursor * {
     display: flex;
   }
 
-  /* 窄屏页眉只剩站标和汉堡按钮，放不下句子，直接隐藏 */
+  /* 窄屏页眉仍留一句名言。两处调整让它放得下：
+     1) 隐藏出处——它有 flex-shrink: 0，会把正文挤到只剩几个字；
+     2) 字号与头部间距收一收，腾出约 240px，能容下多数句子，过长的仍按省略号截断。 */
   .site-quote {
+    font-size: 12px;
+  }
+  .site-quote-source {
     display: none;
+  }
+  .header-container {
+    gap: 10px;
   }
 
   /* 长文辅助元素在窄屏收一收 */
