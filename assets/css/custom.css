@@ -465,7 +465,7 @@ body.custom-cursor * {
   margin-top: 26px;
 }
 
-/* 首页点阵蝴蝶：canvas 由 butterfly.js 绘制，这里只负责尺寸与底板 */
+/* 首页黑洞：canvas 由 blackhole.js 绘制，这里只负责尺寸与底板 */
 .hero-visual {
   margin-top: 46px;
   border-radius: var(--radius);
@@ -477,6 +477,7 @@ body.custom-cursor * {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
+  cursor: crosshair;
 }
 
 /* 通用小芯片标签 */

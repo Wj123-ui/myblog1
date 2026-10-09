@@ -454,7 +454,7 @@ def build():
         ('assets/css/custom.css', 'assets/css/custom.css'),
         ('assets/js/main.js', 'assets/js/main.js'),
         ('assets/js/files.js', 'assets/js/files.js'),
-        ('assets/js/butterfly.js', 'assets/js/butterfly.js'),
+        ('assets/js/blackhole.js', 'assets/js/blackhole.js'),
         ('favicon.svg', 'favicon.svg'),
     ]:
         write(os.path.join(SITE_DIR, dst), read(os.path.join(ROOT, src)))
