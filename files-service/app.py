@@ -31,6 +31,7 @@ import logging
 import os
 import re
 import secrets
+import signal
 import sqlite3
 import sys
 import threading
@@ -222,10 +223,16 @@ class Store(object):
 
     def __init__(self, path):
         self._lock = threading.Lock()
+        self._writes = 0
         self.conn = sqlite3.connect(path, check_same_thread=False, timeout=15)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute('PRAGMA journal_mode=WAL')
         self.conn.execute('PRAGMA synchronous=NORMAL')
+        # 这个连接在整个进程生命周期里都不关闭，而 WAL 模式下自动检查点要等
+        # WAL 超过 1000 页才触发。本站写入很少，结果就是 WAL 一路涨、主库一直很小
+        # （实测主库 4KB、WAL 1.6MB）：WAL 无界增长，崩溃恢复还要重放全部未合并的页。
+        # 这里主动定期合并。
+        self.conn.execute('PRAGMA wal_autocheckpoint=256')
         self.conn.execute(
             '''CREATE TABLE IF NOT EXISTS files (
                    id           TEXT PRIMARY KEY,
@@ -322,6 +329,29 @@ class Store(object):
 
     # ---- 写 ----
 
+    def _after_write(self):
+        """写完后按计数做一次被动检查点。调用方必须已持有锁。
+
+        这个连接在整个进程生命周期里都不关闭，而 WAL 模式下的检查点主要靠自动触发。
+        本站写入很少，所以此前 WAL 一路涨、主库一直很小（实测主库 4KB、WAL 1.6MB）。
+        构造函数里把自动检查点阈值降到 256 页，这里再按写入次数补一次被动检查点：
+        PASSIVE 不阻塞其他连接，也不会因为有人正在读就卡住写路径。
+        """
+        self._writes += 1
+        if self._writes % 64 == 0:
+            try:
+                self.conn.execute('PRAGMA wal_checkpoint(PASSIVE)')
+            except sqlite3.Error:
+                LOG.exception('WAL 检查点失败（不影响本次写入）')
+
+    def checkpoint(self):
+        """把 WAL 合并回主库并截断，进程退出前调用一次。"""
+        with self._lock:
+            try:
+                self.conn.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+            except sqlite3.Error:
+                LOG.exception('退出前 WAL 检查点失败')
+
     def insert(self, record):
         with self._lock:
             self.conn.execute(
@@ -330,12 +360,14 @@ class Store(object):
                 ' VALUES (:id, :name, :stored, :ext, :size, :sha256, :category, :uploader,'
                 ' :note, :ip, :status, 0, :created_at, :published_at)', record)
             self.conn.commit()
+            self._after_write()
 
     def bump_downloads(self, file_id):
         with self._lock:
             self.conn.execute('UPDATE files SET downloads = downloads + 1 WHERE id = :id',
                               {'id': file_id})
             self.conn.commit()
+            self._after_write()
 
     def publish(self, file_id, stamp):
         with self._lock:
@@ -343,11 +375,13 @@ class Store(object):
                 "UPDATE files SET status = 'published', published_at = :ts WHERE id = :id",
                 {'id': file_id, 'ts': stamp})
             self.conn.commit()
+            self._after_write()
 
     def remove(self, file_id):
         with self._lock:
             self.conn.execute('DELETE FROM files WHERE id = :id', {'id': file_id})
             self.conn.commit()
+            self._after_write()
 
 
 STORE = None
@@ -842,12 +876,29 @@ def main():
 
     server = ThreadingHTTPServer((CFG.bind, CFG.port), Handler)
     server.daemon_threads = True
+
+    # systemd 停止服务时先发 SIGTERM（TimeoutStopSec=15），默认处置会直接结束进程，
+    # 于是 WAL 留在原地等下次启动重放。这里接住信号，退出前把 WAL 合并并截断。
+    def shutdown(signum, frame):
+        LOG.info('收到信号 %s，准备退出', signum)
+        threading.Thread(target=server.shutdown, daemon=True).start()
+
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        try:
+            signal.signal(sig, shutdown)
+        except (ValueError, OSError):
+            pass
+
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
         server.server_close()
+        st = STORE
+        if st is not None:
+            st.checkpoint()
+            LOG.info('已合并 WAL 并退出')
 
 
 if __name__ == '__main__':
