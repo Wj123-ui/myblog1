@@ -183,7 +183,8 @@ body.custom-cursor * {
 }
 
 .page-content {
-  padding: 48px 0 72px;
+  /* 顶部留白收窄：首屏不再有标题文字，48px 会在页眉下留出空洞 */
+  padding: 24px 0 72px;
   min-height: calc(100vh - var(--header-height) - 180px);
 }
 
@@ -230,6 +231,37 @@ body.custom-cursor * {
 
 .site-mark:hover {
   transform: scale(1.06);
+}
+
+/* 页眉轮换名言：跟在站标右侧，占据中间剩余宽度，过长时省略号截断。
+   flex 1 + min-width 0 是关键——否则长句会把导航挤走而不是被截断。 */
+.site-quote {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity 320ms ease;
+}
+
+.site-quote.is-fading {
+  opacity: 0;
+}
+
+.site-quote-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.site-quote-source {
+  flex-shrink: 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
 }
 
 .nav-list {
@@ -421,7 +453,8 @@ body.custom-cursor * {
 /* 首屏不再有标题/副标题文字，直接从按钮与标签开始，所以顶部留白收窄 */
 
 .hero-section {
-  padding: 44px 0 56px;
+  /* 首屏第一眼就是按钮与标签，顶部不再额外留白 */
+  padding: 0 0 56px;
 }
 
 .hero-badges {
@@ -1356,6 +1389,11 @@ body.custom-cursor * {
     display: flex;
   }
 
+  /* 窄屏页眉只剩站标和汉堡按钮，放不下句子，直接隐藏 */
+  .site-quote {
+    display: none;
+  }
+
   #cursor-follower,
   .cursor-ring,
   .cursor-dot {
@@ -1363,11 +1401,11 @@ body.custom-cursor * {
   }
 
   .page-content {
-    padding: 36px 0 56px;
+    padding: 20px 0 56px;
   }
 
   .hero-section {
-    padding: 32px 0 40px;
+    padding: 0 0 40px;
   }
 
   .features-grid,
