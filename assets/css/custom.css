@@ -1064,6 +1064,133 @@ button.social-btn {
   margin-top: 16px;
 }
 
+/* 联系方式里「悬停出二维码」的入口（参照小米官网的做法）：
+   图标与其它按钮排成一行，鼠标移上去（或键盘聚焦）时二维码浮在它上方。
+   用 absolute 定位而不占文档流，所以不会推开下方内容。 */
+.contact-pop {
+  position: relative;
+  display: inline-flex;
+}
+
+.contact-pop-card {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%) translateY(4px);
+  z-index: 60;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 12px 10px;
+  width: max-content;
+
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* 过渡只写 opacity 与 transform，不写 visibility：
+     把 visibility 放进 transition 会让它在整个过渡期间保持旧值（hidden），
+     于是「浮出」迟迟不生效——实测加了 is-open 类后 opacity 仍读到 0。
+     收起时的延迟由下面的 delay 提供，展开是即时的。 */
+  transition: opacity var(--transition), transform var(--transition);
+  transition-delay: 0s, 0s;
+}
+
+/* 悬停、键盘聚焦、以及触摸设备点击后的 is-open 三种情况都浮出。
+   刻意拆成三条独立规则而不是一条多选择器：多选择器列表里只要有一条不被浏览器
+   接受，整组声明都可能被丢弃（实测把三条写在一条里时 opacity 一直不生效，
+   而拆开后正常）。分开写也更便于逐条排查。 */
+.contact-pop:hover .contact-pop-card {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.contact-pop:focus-within .contact-pop-card {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.contact-pop.is-open .contact-pop-card {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* 卡片下沿的小尖角，指向图标 */
+.contact-pop-card::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: var(--bg-elevated);
+}
+
+.contact-pop-qr {
+  display: block;
+  width: 180px;
+  height: 180px;
+  /* 圆形呈现：图片本身是方形裁切、四角带一点原图背景，
+     圆角 + 白底可以把四角收干净，且完全不动码点像素 */
+  border-radius: 12px;
+  background: #fff;
+}
+
+.contact-pop-name {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.contact-pop-id {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.contact-pop-hint {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* 窄屏：卡片可能超出屏幕左右，收窄并让它居中于视口而不是图标 */
+@media (max-width: 520px) {
+  .contact-pop-card {
+    left: auto;
+    right: 0;
+    transform: translateY(4px);
+  }
+  .contact-pop:hover .contact-pop-card {
+    transform: translateY(0);
+  }
+  .contact-pop:focus-within .contact-pop-card {
+    transform: translateY(0);
+  }
+  .contact-pop.is-open .contact-pop-card {
+    transform: translateY(0);
+  }
+  .contact-pop-card::after {
+    left: auto;
+    right: 26px;
+  }
+  .contact-pop-qr {
+    width: 160px;
+    height: 160px;
+  }
+}
+
 .text-center {
   text-align: center;
 }

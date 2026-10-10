@@ -64,6 +64,48 @@ permalink: /about/
         </svg>
         <span class="js-qq-label">QQ 3554786480</span>
       </button>
+      <!-- 抖音没有可用的网页直达链接。参照小米官网的做法：
+           图标本身是一行里的普通按钮，鼠标悬停（或键盘聚焦）时二维码浮在它上方。
+           纯 :hover 键盘用不了，所以容器同时响应 :focus-within；
+           触摸设备没有悬停，改为点击切换，由下面的脚本处理。 -->
+      <span class="contact-pop">
+        <button type="button" class="social-btn social-btn--compact" aria-describedby="douyin-tip">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+            <path d="M9.6 1h2.2c.2 1.2.9 2.2 1.9 2.8.5.3 1 .5 1.6.6v2.2a6.6 6.6 0 0 1-3.6-1.1v4.9a4.3 4.3 0 1 1-4.3-4.3c.2 0 .4 0 .6.1v2.3a2 2 0 1 0 1.4 1.9V1Z"/>
+          </svg>
+          抖音
+        </button>
+        <span class="contact-pop-card" role="tooltip">
+          <!-- 不加 loading="lazy"：卡片初始是 visibility:hidden，懒加载判定它不在视口内
+               就不会去取图，于是鼠标移上去时先看到一块空白（实测）。
+               这张图本来就只在悬停时才显示，提前加载正合适。 -->
+          <img class="contact-pop-qr" src="{{ '/assets/images/douyin.png' | relative_url }}"
+               alt="抖音账号 Hesperus 的二维码" width="180" height="180"
+               decoding="async">
+          <span class="contact-pop-name">Hesperus</span>
+          <span class="contact-pop-id">抖音号 84526083977</span>
+        </span>
+      </span>
     </div>
+    <p class="contact-pop-hint" id="douyin-tip">把鼠标移到图标上可看二维码；也可以直接搜索上方的抖音号关注。</p>
   </div>
 </div>
+
+<script>
+// 触摸设备没有悬停，改为点击图标切换二维码；桌面端交给 CSS 的 :hover / :focus-within。
+(function () {
+  var pops = document.querySelectorAll('.contact-pop');
+  Array.prototype.forEach.call(pops, function (pop) {
+    var btn = pop.querySelector('button');
+    if (!btn) return;
+    // 只接管没有真实悬停能力的设备，避免和 CSS 的 :hover 打架
+    if (!window.matchMedia('(hover: none)').matches) return;
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var open = pop.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+})();
+</script>
