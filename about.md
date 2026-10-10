@@ -90,22 +90,3 @@ permalink: /about/
     <p class="contact-pop-hint" id="douyin-tip">把鼠标移到图标上可看二维码；也可以直接搜索上方的抖音号关注。</p>
   </div>
 </div>
-
-<script>
-// 触摸设备没有悬停，改为点击图标切换二维码；桌面端交给 CSS 的 :hover / :focus-within。
-(function () {
-  var pops = document.querySelectorAll('.contact-pop');
-  Array.prototype.forEach.call(pops, function (pop) {
-    var btn = pop.querySelector('button');
-    if (!btn) return;
-    // 只接管没有真实悬停能力的设备，避免和 CSS 的 :hover 打架
-    if (!window.matchMedia('(hover: none)').matches) return;
-
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-      var open = pop.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-  });
-})();
-</script>

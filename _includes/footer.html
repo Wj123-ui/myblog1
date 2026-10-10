@@ -22,6 +22,24 @@
         </svg>
         <span class="js-qq-label">QQ 3554786480</span>
       </button>
+      <!-- 抖音：与关于页同一套交互（悬停/聚焦浮出二维码）。
+           用 .contact-pop 容器 + relative 定位，所以这里能直接复用。
+           页脚在页面底部，卡片向上浮出（bottom: 100%），方向正好。 -->
+      <span class="contact-pop">
+        <button type="button" class="social-btn" aria-label="查看抖音二维码">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+            <path d="M9.6 1h2.2c.2 1.2.9 2.2 1.9 2.8.5.3 1 .5 1.6.6v2.2a6.6 6.6 0 0 1-3.6-1.1v4.9a4.3 4.3 0 1 1-4.3-4.3c.2 0 .4 0 .6.1v2.3a2 2 0 1 0 1.4 1.9V1Z"/>
+          </svg>
+          抖音
+        </button>
+        <span class="contact-pop-card" role="tooltip">
+          <img class="contact-pop-qr" src="{{ '/assets/images/douyin.png' | relative_url }}"
+               alt="抖音账号 Hesperus 的二维码" width="180" height="180"
+               decoding="async">
+          <span class="contact-pop-name">Hesperus</span>
+          <span class="contact-pop-id">抖音号 84526083977</span>
+        </span>
+      </span>
     </div>
 
     <p class="footer-copyright">
@@ -69,6 +87,23 @@
       } else {
         legacyCopy();
       }
+    });
+  });
+})();
+
+// 「悬停出二维码」的入口（关于页的「联系我」与页脚各有一个）在触摸设备上的处理：
+// 手机没有悬停，改为点击切换。桌面端不接管，交给 CSS 的 :hover / :focus-within。
+// 放在页脚是为了全站共用一份，避免每个用到它的页面各写一遍。
+(function () {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  var pops = document.querySelectorAll('.contact-pop');
+  Array.prototype.forEach.call(pops, function (pop) {
+    var btn = pop.querySelector('button');
+    if (!btn) return;
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var open = pop.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
   });
 })();
